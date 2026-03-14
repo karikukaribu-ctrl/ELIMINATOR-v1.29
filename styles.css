@@ -27,14 +27,18 @@
   --radius-md:16px;
   --radius-sm:12px;
 
-  --leftW:360px;
-  --rightW:420px;
   --baseSize:16px;
   --rouletteSize:164px;
 
   --font-main:"Inter", system-ui, sans-serif;
-  --font-alt:"Zen Maru Gothic", sans-serif;
-  --font-display:"Baloo 2", cursive;
+  --font-zen:"Zen Maru Gothic", sans-serif;
+  --font-mplus:"M PLUS Rounded 1c", sans-serif;
+  --font-yusei:"Yusei Magic", sans-serif;
+  --font-kaisei:"Kaisei Decol", serif;
+}
+
+[hidden]{
+  display:none !important;
 }
 
 *{box-sizing:border-box}
@@ -58,10 +62,6 @@ body{
   overflow-x:hidden;
 }
 
-body[data-font="inter"]{font-family:var(--font-main)}
-body[data-font="zen"]{font-family:var(--font-alt)}
-body[data-font="baloo"]{font-family:var(--font-display)}
-
 body::before{
   content:"";
   position:fixed;
@@ -73,6 +73,12 @@ body::before{
     radial-gradient(circle at 82% 74%, rgba(255,255,255,.08), transparent 22%);
   opacity:.65;
 }
+
+body[data-font="inter"]{font-family:var(--font-main)}
+body[data-font="zen"]{font-family:var(--font-zen)}
+body[data-font="mplus"]{font-family:var(--font-mplus)}
+body[data-font="yusei"]{font-family:var(--font-yusei)}
+body[data-font="kaisei"]{font-family:var(--font-kaisei)}
 
 body.theme--printemps{
   --bg:#e8f3dc;
@@ -223,10 +229,7 @@ body.is-focus{
   --rouletteSize:124px;
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
   font:inherit;
 }
 
@@ -319,7 +322,7 @@ button{
 .app-title{
   margin:8px 0 0;
   text-align:center;
-  font-family:var(--font-display);
+  font-family:"Baloo 2", cursive;
   font-size:clamp(78px, 9vw, 124px);
   letter-spacing:.05em;
   color:var(--fg);
@@ -484,7 +487,6 @@ body.is-focus .mission-card{
 .task-title{
   margin:12px 0 8px;
   text-align:center;
-  font-family:var(--font-display);
   font-size:clamp(34px, 4.2vw, 58px);
   line-height:1.08;
   font-weight:800;
@@ -493,7 +495,6 @@ body.is-focus .mission-card{
 
 body.is-serious .task-title,
 body.is-focus .task-title{
-  font-family:var(--font-main);
   font-size:clamp(28px, 3.2vw, 40px);
   font-weight:800;
 }
@@ -643,7 +644,7 @@ body.is-focus .roulette-wheel{
   z-index:6000;
   display:flex;
   flex-direction:column;
-  width:min(92vw, var(--leftW));
+  width:min(92vw, 420px);
   background:var(--panel);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
@@ -655,14 +656,12 @@ body.is-focus .roulette-wheel{
 .panel--left{
   left:0;
   transform:translateX(-108%);
-  width:min(92vw, var(--leftW));
   border-right:1px solid var(--line);
 }
 
 .panel--right{
   right:0;
   transform:translateX(108%);
-  width:min(92vw, var(--rightW));
   border-left:1px solid var(--line);
 }
 
