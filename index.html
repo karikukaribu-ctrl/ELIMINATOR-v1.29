@@ -8,16 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Baloo+2:wght@700;800&family=Zen+Maru+Gothic:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;500;700&family=Yusei+Magic&family=Kaisei+Decol:wght@400;500;700&display=swap"
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header id="topBar" class="topbar">
+  <header class="topbar" id="topBar">
     <div class="topbar__left">
-      <button id="btnLeft" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir le panneau gauche">≡</button>
+      <button id="btnLeft" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir panneau gauche">≡</button>
     </div>
 
     <div class="topbar__center">
@@ -32,7 +32,7 @@
     </div>
 
     <div class="topbar__right">
-      <button id="btnRight" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir le panneau droit">▦</button>
+      <button id="btnRight" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir panneau droit">▦</button>
     </div>
   </header>
 
@@ -42,7 +42,7 @@
   <aside id="leftPanel" class="panel panel--left" aria-label="Panneau gauche">
     <div class="panel__top">
       <div class="panel__title">Menu</div>
-      <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer le panneau gauche">×</button>
+      <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer panneau gauche">×</button>
     </div>
 
     <nav class="panel__tabs" aria-label="Onglets panneau gauche">
@@ -54,17 +54,13 @@
     </nav>
 
     <div class="panel__content">
-      <!-- INBOX -->
       <section id="left-inbox" class="tab-page is-show">
         <p class="muted small">
-          Une ligne = une tâche. Une ligne en MAJUSCULES = une catégorie.
+          Une ligne = une tâche. Une ligne en MAJUSCULES = catégorie.
           Exemple :
-          <br>
-          <span class="mono">ADMIN</span>
-          <br>
-          <span class="mono">Répondre à Anna - 2</span>
-          <br>
-          <span class="mono">Rapport mutuelle 3</span>
+          <br><span class="mono">ADMIN</span>
+          <br><span class="mono">Répondre à Anna - 2</span>
+          <br><span class="mono">Rapport mutuelle 3</span>
         </p>
 
         <textarea
@@ -94,7 +90,6 @@ Ranger bureau 1"
         </div>
       </section>
 
-      <!-- TASKS -->
       <section id="left-tasks" class="tab-page">
         <div class="row row--wrap">
           <div class="grow">
@@ -127,9 +122,8 @@ Ranger bureau 1"
         <div id="taskList" class="stack"></div>
       </section>
 
-      <!-- KIFFANCE -->
       <section id="left-kiffance" class="tab-page">
-        <p class="muted small">Petites pauses utiles. Pas des trous noirs numériques.</p>
+        <p class="muted small">Pauses utiles et récompenses non débiles.</p>
 
         <div class="row row--wrap">
           <input id="kiffNew" class="field input" type="text" placeholder="Ajouter une kiffance…">
@@ -142,11 +136,9 @@ Ranger bureau 1"
         </div>
 
         <div id="kiffSuggestionBox" class="soft-card muted">Aucune suggestion.</div>
-
         <div id="kiffList" class="stack"></div>
       </section>
 
-      <!-- PREFS -->
       <section id="left-prefs" class="tab-page">
         <div class="grid2">
           <div>
@@ -173,7 +165,9 @@ Ranger bureau 1"
             <select id="fontSel" class="field select">
               <option value="inter">Inter</option>
               <option value="zen">Zen Maru Gothic</option>
-              <option value="baloo">Baloo 2</option>
+              <option value="mplus">M PLUS Rounded 1c</option>
+              <option value="yusei">Yusei Magic</option>
+              <option value="kaisei">Kaisei Decol</option>
             </select>
           </div>
 
@@ -225,7 +219,6 @@ Ranger bureau 1"
         </div>
       </section>
 
-      <!-- EXPORT -->
       <section id="left-export" class="tab-page">
         <p class="muted small">Export JSON complet + rapport du jour.</p>
 
@@ -240,7 +233,6 @@ Ranger bureau 1"
     </div>
   </aside>
 
-  <!-- CONTENU CENTRAL -->
   <main id="hub" class="hub">
     <div class="hub__inner">
       <h1 id="appTitle" class="app-title">ELIMINATOR</h1>
@@ -322,11 +314,10 @@ Ranger bureau 1"
     </div>
   </main>
 
-  <!-- PANNEAU DROIT -->
   <aside id="rightPanel" class="panel panel--right" aria-label="Panneau droit">
     <div class="panel__top">
       <div class="panel__title">Panneau</div>
-      <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer le panneau droit">×</button>
+      <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer panneau droit">×</button>
     </div>
 
     <nav class="panel__tabs" aria-label="Onglets panneau droit">
@@ -339,7 +330,6 @@ Ranger bureau 1"
     </nav>
 
     <div class="panel__content">
-      <!-- SETS -->
       <section id="right-sets" class="tab-page is-show">
         <div class="row row--wrap">
           <div class="grow">
@@ -360,7 +350,6 @@ Ranger bureau 1"
         <div id="setsContent" class="stack"></div>
       </section>
 
-      <!-- HABITS -->
       <section id="right-habits" class="tab-page">
         <div class="row row--wrap">
           <input id="habitName" class="field input" type="text" placeholder="Nom de l’habitude">
@@ -370,7 +359,6 @@ Ranger bureau 1"
         <div id="habitsContent" class="stack"></div>
       </section>
 
-      <!-- FLOW -->
       <section id="right-flow" class="tab-page">
         <div class="soft-card">
           <div class="row row--wrap">
@@ -403,14 +391,12 @@ Ranger bureau 1"
         </div>
       </section>
 
-      <!-- HISTORY -->
       <section id="right-history" class="tab-page">
         <div id="historyContent" class="stack"></div>
         <div class="divider"></div>
         <div id="calendarGrid" class="calendar-grid"></div>
       </section>
 
-      <!-- NOTES -->
       <section id="right-notes" class="tab-page">
         <div class="soft-card">
           <label for="notesAreaPanel" class="muted small">Notes</label>
@@ -423,17 +409,14 @@ Ranger bureau 1"
         </div>
       </section>
 
-      <!-- STATS -->
       <section id="right-stats" class="tab-page">
         <div id="statsContentPanel" class="stack"></div>
       </section>
     </div>
   </aside>
 
-  <!-- BACKDROP MODAL -->
   <div id="modalBack" class="modal-backdrop" hidden></div>
 
-  <!-- MODAL POMODORO -->
   <div id="pomoModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Paramètres pomodoro">
     <div class="modal-card">
       <div class="modal-card__head">
@@ -470,7 +453,6 @@ Ranger bureau 1"
     </div>
   </div>
 
-  <!-- OVERLAY CENTRAL -->
   <div id="overlayModal" class="modal modal--large" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
     <div class="modal-card modal-card--large">
       <div class="modal-card__head">
@@ -479,7 +461,6 @@ Ranger bureau 1"
       </div>
 
       <div class="modal-card__body modal-card__body--scroll">
-        <!-- NOTES -->
         <section id="overlay-notes" class="overlay-page" hidden>
           <label for="notesArea" class="muted small">Notes (auto-sauvegarde)</label>
           <textarea id="notesArea" class="field textarea" rows="10" placeholder="Écris ici."></textarea>
@@ -495,7 +476,6 @@ Ranger bureau 1"
           <div id="notesEntriesList" class="stack"></div>
         </section>
 
-        <!-- TYPHONSE -->
         <section id="overlay-typhonse" class="overlay-page" hidden>
           <p class="muted small">Petites choses à capturer, garder, cocher.</p>
 
@@ -507,9 +487,8 @@ Ranger bureau 1"
           <div id="typhonseList" class="stack"></div>
         </section>
 
-        <!-- KIFFANCE -->
         <section id="overlay-kiffance" class="overlay-page" hidden>
-          <p class="muted small">Une pause intelligente plutôt qu’un effondrement de la volonté.</p>
+          <p class="muted small">Une pause intelligente plutôt qu’un naufrage du cortex exécutif.</p>
 
           <div id="overlayKiffSuggestion" class="soft-card">Aucune suggestion.</div>
 
@@ -523,7 +502,6 @@ Ranger bureau 1"
           <div id="overlayKiffList" class="stack"></div>
         </section>
 
-        <!-- STATS -->
         <section id="overlay-stats" class="overlay-page" hidden>
           <div id="statsContent" class="stack"></div>
         </section>
