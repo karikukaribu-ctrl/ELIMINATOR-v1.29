@@ -38,7 +38,8 @@
   --panelRight:430px;
 }
 
-html,body{
+html,
+body{
   height:100%;
 }
 
@@ -57,11 +58,11 @@ body{
   overflow-x:hidden;
 }
 
-body[data-font="yusei"]{font-family:var(--font-yusei);}
-body[data-font="zen"]{font-family:var(--font-zen);}
-body[data-font="mplus"]{font-family:var(--font-mplus);}
-body[data-font="kosugi"]{font-family:var(--font-kosugi);}
-body[data-font="inter"]{font-family:var(--font-inter);}
+body[data-font="yusei"]{ font-family:var(--font-yusei); }
+body[data-font="zen"]{ font-family:var(--font-zen); }
+body[data-font="mplus"]{ font-family:var(--font-mplus); }
+body[data-font="kosugi"]{ font-family:var(--font-kosugi); }
+body[data-font="inter"]{ font-family:var(--font-inter); }
 
 body.theme--printemps{
   --bg:#dbe9cf;
@@ -179,7 +180,7 @@ button{
 }
 
 .full{
-  grid-column:1/-1;
+  grid-column:1 / -1;
 }
 
 .topbar{
@@ -259,6 +260,7 @@ button{
   display:grid;
   place-items:center;
   font-size:1rem;
+  flex:0 0 auto;
 }
 
 .panel-back{
@@ -281,17 +283,19 @@ button{
   box-shadow:var(--shadow);
   display:flex;
   flex-direction:column;
-  will-change:transform;
+  overflow:hidden;
 }
 
 .panel--left{
   left:0;
   width:var(--panelLeft);
+  max-width:min(92vw, 720px);
 }
 
 .panel--right{
   right:0;
   width:var(--panelRight);
+  max-width:min(94vw, 840px);
 }
 
 .panel__head{
@@ -300,6 +304,7 @@ button{
   align-items:center;
   gap:10px;
   padding:14px 14px 10px;
+  flex:0 0 auto;
 }
 
 .panel__head-tools{
@@ -326,11 +331,14 @@ button{
   flex-wrap:wrap;
   gap:6px;
   padding:0 14px 10px;
+  flex:0 0 auto;
 }
 
 .panel__body{
   overflow:auto;
   padding:8px 14px 18px;
+  min-height:0;
+  flex:1 1 auto;
 }
 
 .tab-page{
@@ -450,6 +458,7 @@ body.is-focus .task-title{
   justify-content:center;
   gap:16px;
   margin:12px 0 18px;
+  flex-wrap:wrap;
 }
 
 .side-btn{
@@ -460,6 +469,7 @@ body.is-focus .task-title{
   place-items:center;
   font-size:1.1rem;
   background:var(--glass-3);
+  flex:0 0 auto;
 }
 
 .side-btn--accent{
@@ -472,6 +482,7 @@ body.is-focus .task-title{
   padding:0;
   width:var(--rouletteSize);
   height:var(--rouletteSize);
+  flex:0 0 auto;
 }
 
 .roulette-wheel{
@@ -491,8 +502,8 @@ body.is-focus .task-title{
 }
 
 @keyframes wheelSpin{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(720deg)}
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(720deg); }
 }
 
 .roulette-wheel__txt{
@@ -512,6 +523,7 @@ body.is-focus .task-title{
   align-items:center;
   gap:8px;
   margin:18px 0 10px;
+  flex-wrap:wrap;
 }
 
 .pomo-pill{
@@ -545,6 +557,7 @@ body.is-focus .task-title{
   justify-content:space-between;
   gap:10px;
   margin-bottom:10px;
+  flex-wrap:wrap;
 }
 
 .field-group{
@@ -606,7 +619,7 @@ body.is-focus .task-title{
 
 .grid-2{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(2, minmax(0,1fr));
   gap:12px;
 }
 
@@ -627,7 +640,7 @@ body.is-focus .task-title{
 
 .card__left{
   min-width:0;
-  flex:1;
+  flex:1 1 auto;
 }
 
 .card__title{
@@ -645,6 +658,7 @@ body.is-focus .task-title{
   display:flex;
   flex-wrap:wrap;
   gap:6px;
+  flex:0 0 auto;
 }
 
 .soft-sep{
@@ -671,7 +685,7 @@ body.is-focus .task-title{
 
 .calendar-grid{
   display:grid;
-  grid-template-columns:repeat(10,1fr);
+  grid-template-columns:repeat(10, 1fr);
   gap:6px;
 }
 
@@ -717,12 +731,14 @@ body.is-focus .task-title{
 
 .glass-modal{
   width:min(940px, 96vw);
+  max-height:calc(100vh - 36px);
   border-radius:26px;
   background:var(--glass-2);
   backdrop-filter:blur(24px);
   -webkit-backdrop-filter:blur(24px);
   box-shadow:var(--shadow);
   padding:16px;
+  overflow:hidden;
 }
 
 .glass-modal--small{
@@ -739,11 +755,17 @@ body.is-focus .task-title{
   align-items:center;
   gap:10px;
   margin-bottom:12px;
+  flex:0 0 auto;
+}
+
+.glass-modal__body{
+  min-height:0;
 }
 
 .glass-modal__body--scroll{
-  max-height:min(80vh, 860px);
+  max-height:calc(100vh - 120px);
   overflow:auto;
+  padding-right:4px;
 }
 
 .overlay-page{
@@ -754,13 +776,17 @@ body.is-focus .task-title{
   display:block;
 }
 
+.small{
+  font-size:.88rem;
+}
+
 @media (max-width: 900px){
   .grid-2{
     grid-template-columns:1fr;
   }
 
   .calendar-grid{
-    grid-template-columns:repeat(7,1fr);
+    grid-template-columns:repeat(7, 1fr);
   }
 }
 
@@ -790,5 +816,15 @@ body.is-focus .task-title{
   .top-btn{
     padding:6px 9px;
     font-size:.88rem;
+  }
+
+  .panel--left,
+  .panel--right{
+    max-width:100vw;
+    width:min(100vw, var(--panelLeft));
+  }
+
+  .panel--right{
+    width:min(100vw, var(--panelRight));
   }
 }
