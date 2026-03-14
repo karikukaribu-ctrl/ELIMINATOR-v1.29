@@ -1,18 +1,10 @@
-/* =========================================================
-   ELIMINATOR V2
-   Architecture robuste
-   - UI type v27
-   - logique inspirée v19
-   - saisons Ghibli plus contrastées
-========================================================= */
-
 const $ = (id) => document.getElementById(id);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 const uid = () => Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
 const nowISO = () => new Date().toISOString();
 
-const STORAGE_KEY = "eliminator_v2_stable";
+const STORAGE_KEY = "eliminator_v2_perfected";
 const SEASONS = ["printemps", "ete", "automne", "hiver", "noirblanc"];
 
 const SUBLINES = [
@@ -25,7 +17,7 @@ const SUBLINES = [
 ];
 
 const TIPS = [
-  "Un seul étorion. Pas un TED Talk intérieur.",
+  "Un seul étorion. Pas un opéra intérieur.",
   "Épaules basses. Mâchoire relâchée. Continue.",
   "Commence moche. Le cerveau adore négocier, ignore-le.",
   "Une seule cible. Un seul onglet. Un seul monde.",
@@ -69,7 +61,8 @@ const defaultState = {
     "Marche 60 secondes. Puis reviens.",
     "Range 10 objets. Pas 47.",
     "Respire 5 cycles lents.",
-    "Étire nuque et épaules 45 secondes."
+    "Étire nuque et épaules 45 secondes.",
+    "Regarde au loin 20 secondes. Reviens."
   ],
 
   pomodoro: {
@@ -115,9 +108,9 @@ const defaultState = {
 
 let state = loadState();
 
-/* =========================================================
+/* =========================
    STORAGE
-========================================================= */
+========================= */
 
 function safeClone(obj){
   if(typeof structuredClone === "function"){
@@ -199,9 +192,9 @@ function saveState(){
   }catch(_){}
 }
 
-/* =========================================================
-   GENERAL HELPERS
-========================================================= */
+/* =========================
+   HELPERS
+========================= */
 
 function dayKey(d = new Date()){
   const y = d.getFullYear();
@@ -241,8 +234,7 @@ function seasonLabel(season){
 }
 
 function pickRandom(arr){
-  if(!arr.length) return "";
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr.length ? arr[Math.floor(Math.random() * arr.length)] : "";
 }
 
 function pickSubtitle(){
@@ -250,7 +242,7 @@ function pickSubtitle(){
 }
 
 let statusTimer = null;
-function status(message, ms = 4000){
+function status(message, ms = 4200){
   const el = $("statusSpot");
   if(!el) return;
   el.textContent = message || "";
@@ -262,9 +254,9 @@ function status(message, ms = 4000){
   }
 }
 
-/* =========================================================
+/* =========================
    THEME + MODES
-========================================================= */
+========================= */
 
 function applyTheme(){
   document.body.classList.remove(
@@ -305,15 +297,14 @@ function applyTheme(){
 
   if($("listToggleBtn")){
     $("listToggleBtn").setAttribute("aria-pressed", state.ui.showBelowList ? "true" : "false");
-    $("listToggleBtn").classList.toggle("is-active", !!state.ui.showBelowList);
   }
 
   document.title = state.ui.focus ? "ELIMINATOR — Focus" : "ELIMINATOR";
 }
 
-/* =========================================================
+/* =========================
    PANELS + TABS
-========================================================= */
+========================= */
 
 function openPanel(which){
   $("panelBack")?.classList.add("is-show");
@@ -371,31 +362,31 @@ function bindTabs(){
   });
 }
 
-/* =========================================================
+/* =========================
    OVERLAYS
-========================================================= */
+========================= */
 
 function closeOverlay(){
-  $("overlayModal").hidden = true;
-  $("modalBack").hidden = true;
+  $("overlayModal")?.setAttribute("hidden", "");
+  $("modalBack")?.setAttribute("hidden", "");
   $$(".overlay-page").forEach(page => {
-    page.hidden = true;
+    page.setAttribute("hidden", "");
     page.classList.remove("is-show");
   });
 }
 
 function openOverlay(which){
-  $("overlayModal").hidden = false;
-  $("modalBack").hidden = false;
+  $("overlayModal")?.removeAttribute("hidden");
+  $("modalBack")?.removeAttribute("hidden");
 
   $$(".overlay-page").forEach(page => {
-    page.hidden = true;
+    page.setAttribute("hidden", "");
     page.classList.remove("is-show");
   });
 
   const page = $(`overlay-${which}`);
   if(page){
-    page.hidden = false;
+    page.removeAttribute("hidden");
     page.classList.add("is-show");
   }
 
@@ -405,7 +396,8 @@ function openOverlay(which){
     kiffance: "Kiffance",
     stats: "Stats"
   };
-  $("overlayTitle").textContent = titleMap[which] || "Fenêtre";
+
+  if($("overlayTitle")) $("overlayTitle").textContent = titleMap[which] || "Fenêtre";
 
   if(which === "notes") renderNotesOverlay();
   if(which === "typhonse") renderTyphonse();
@@ -416,9 +408,9 @@ function openOverlay(which){
   if(which === "stats") renderStatsPanel();
 }
 
-/* =========================================================
-   TASK PARSING + ESTIMATION
-========================================================= */
+/* =========================
+   TASK IMPORT + ESTIMATION
+========================= */
 
 function isAllCapsLine(line){
   const t = String(line || "").trim();
@@ -518,9 +510,9 @@ function importFromInbox(text){
   return imported.length;
 }
 
-/* =========================================================
+/* =========================
    TASK ENGINE
-========================================================= */
+========================= */
 
 function activeTasks(){
   const included = state.settings.includedCats;
@@ -745,9 +737,9 @@ function degommeEtorion(){
   status("💣 Un étorion de moins.");
 }
 
-/* =========================================================
+/* =========================
    UNDO
-========================================================= */
+========================= */
 
 function pushUndo(label){
   state.undo.unshift({
@@ -773,9 +765,9 @@ function doUndo(){
   status("Retour arrière.");
 }
 
-/* =========================================================
+/* =========================
    HUD + CENTRAL RENDER
-========================================================= */
+========================= */
 
 function renderSubtitle(){
   const subtitle = $("subtitle");
@@ -824,14 +816,14 @@ function renderHub(){
   const task = getTask(state.currentTaskId);
 
   if(!task){
-    $("taskTitle").textContent = "Aucune tâche sélectionnée";
-    $("metaCat").textContent = "—";
-    $("metaEt").textContent = "—";
-    $("metaTimer").textContent = "00:00";
+    if($("taskTitle")) $("taskTitle").textContent = "Aucune tâche sélectionnée";
+    if($("metaCat")) $("metaCat").textContent = "—";
+    if($("metaEt")) $("metaEt").textContent = "—";
+    if($("metaTimer")) $("metaTimer").textContent = "00:00";
   }else{
-    $("taskTitle").textContent = task.title;
-    $("metaCat").textContent = task.cat || "Inbox";
-    $("metaEt").textContent = `${task.etorionsLeft}/${task.etorionsTotal}`;
+    if($("taskTitle")) $("taskTitle").textContent = task.title;
+    if($("metaCat")) $("metaCat").textContent = task.cat || "Inbox";
+    if($("metaEt")) $("metaEt").textContent = `${task.etorionsLeft}/${task.etorionsTotal}`;
   }
 }
 
@@ -852,9 +844,9 @@ function toggleTaskMeta(){
   meta.hidden = !meta.hidden;
 }
 
-/* =========================================================
+/* =========================
    BELOW LIST
-========================================================= */
+========================= */
 
 function applyBelowListVisibility(){
   const list = $("belowList");
@@ -919,9 +911,9 @@ function renderBelowList(){
   });
 }
 
-/* =========================================================
+/* =========================
    TASK PANEL
-========================================================= */
+========================= */
 
 function categories(){
   const set = new Set(state.tasks.map(task => task.cat || "Inbox"));
@@ -1000,9 +992,9 @@ function renderTasksPanel(){
   });
 }
 
-/* =========================================================
+/* =========================
    NOTES
-========================================================= */
+========================= */
 
 function addNoteEntry(text){
   const value = String(text || "").trim();
@@ -1074,9 +1066,9 @@ function renderNotesOverlay(){
   renderNotesEntries();
 }
 
-/* =========================================================
+/* =========================
    TYPHONSE
-========================================================= */
+========================= */
 
 function addTyphonse(label){
   const value = String(label || "").trim();
@@ -1142,9 +1134,9 @@ function renderTyphonse(){
   });
 }
 
-/* =========================================================
+/* =========================
    KIFFANCE
-========================================================= */
+========================= */
 
 let lastKiffSuggestion = "";
 
@@ -1233,9 +1225,9 @@ function renderKiffance(){
   }
 }
 
-/* =========================================================
+/* =========================
    HABITS
-========================================================= */
+========================= */
 
 function addHabit(name, slots){
   const nm = String(name || "").trim();
@@ -1332,9 +1324,9 @@ function renderHabitsPanel(){
   });
 }
 
-/* =========================================================
+/* =========================
    SETS
-========================================================= */
+========================= */
 
 function initSetsChecksForToday(){
   const dk = dayKey();
@@ -1444,15 +1436,11 @@ function renderSetsPanel(){
       );
     };
   });
-
-  if($("setsToggleBtn")){
-    $("setsToggleBtn").setAttribute("aria-pressed", $("rightPanel")?.classList.contains("is-open") ? "true" : "false");
-  }
 }
 
-/* =========================================================
+/* =========================
    HISTORY + STATS
-========================================================= */
+========================= */
 
 function snapshotDay(){
   const dk = dayKey();
@@ -1608,9 +1596,9 @@ function renderStatsPanel(){
   if($("statsContentPanel")) $("statsContentPanel").innerHTML = html;
 }
 
-/* =========================================================
+/* =========================
    EXPORT
-========================================================= */
+========================= */
 
 function renderExport(){
   const out = $("exportOut");
@@ -1626,18 +1614,18 @@ async function copyText(text){
   }
 }
 
-/* =========================================================
+/* =========================
    TIPS
-========================================================= */
+========================= */
 
 function maybeShowTip(force = false){
   if(!force && Math.random() > state.settings.tipsChance) return;
   status(`Conseil — ${pickRandom(TIPS)}`, 6500);
 }
 
-/* =========================================================
+/* =========================
    POMODORO
-========================================================= */
+========================= */
 
 let pomoTimer = null;
 let pomoRunning = false;
@@ -1702,9 +1690,9 @@ function togglePomo(){
   else playPomo();
 }
 
-/* =========================================================
+/* =========================
    PREFS + FLOW
-========================================================= */
+========================= */
 
 function syncPrefsUI(){
   if($("modeSel")) $("modeSel").value = state.ui.mode;
@@ -1765,9 +1753,9 @@ function resetPrefs(){
   renderAll();
 }
 
-/* =========================================================
+/* =========================
    RESET GLOBAL
-========================================================= */
+========================= */
 
 function resetDay(){
   pushUndo("reset");
@@ -1790,9 +1778,9 @@ function resetDay(){
   status("Reset total. Terrain nettoyé.");
 }
 
-/* =========================================================
+/* =========================
    RENDER GLOBAL
-========================================================= */
+========================= */
 
 function renderAll(){
   applyTheme();
@@ -1813,9 +1801,9 @@ function renderAll(){
   renderPomodoro();
 }
 
-/* =========================================================
+/* =========================
    TIMERS
-========================================================= */
+========================= */
 
 let taskTimerLoop = null;
 function startTaskTimerLoop(){
@@ -1825,9 +1813,9 @@ function startTaskTimerLoop(){
   }, 500);
 }
 
-/* =========================================================
+/* =========================
    EVENTS
-========================================================= */
+========================= */
 
 function bindUI(){
   $("btnLeft")?.addEventListener("click", () => openPanel("left"));
@@ -1926,15 +1914,15 @@ function bindUI(){
 
   $("modalBack")?.addEventListener("click", () => {
     closeOverlay();
-    $("pomoModal").hidden = true;
-    $("modalBack").hidden = true;
+    $("pomoModal")?.setAttribute("hidden", "");
+    $("modalBack")?.setAttribute("hidden", "");
   });
 
   $("inboxAdd")?.addEventListener("click", () => {
     const count = importFromInbox($("inboxText")?.value || "");
     if(count > 0){
       addNoteEntry(`Import de ${count} tâche(s).`);
-      $("inboxText").value = "";
+      if($("inboxText")) $("inboxText").value = "";
       status(`${count} tâche(s) importée(s).`);
     }else{
       status("Rien importé.");
@@ -1960,7 +1948,7 @@ function bindUI(){
     if(!txt) return;
 
     state.kiffances.push(txt);
-    $("kiffNew").value = "";
+    if($("kiffNew")) $("kiffNew").value = "";
     saveState();
     renderKiffance();
   });
@@ -2025,17 +2013,17 @@ function bindUI(){
   $("pomoTime")?.addEventListener("click", togglePomo);
 
   $("pomoEdit")?.addEventListener("click", () => {
-    $("pomoModal").hidden = false;
-    $("modalBack").hidden = false;
+    $("pomoModal")?.removeAttribute("hidden");
+    $("modalBack")?.removeAttribute("hidden");
 
-    $("pomoMinutes").value = state.pomodoro.workMin;
-    $("breakMinutes").value = state.pomodoro.breakMin;
-    $("autoStartSel").value = state.pomodoro.autoStart;
+    if($("pomoMinutes")) $("pomoMinutes").value = state.pomodoro.workMin;
+    if($("breakMinutes")) $("breakMinutes").value = state.pomodoro.breakMin;
+    if($("autoStartSel")) $("autoStartSel").value = state.pomodoro.autoStart;
   });
 
   $("modalClose")?.addEventListener("click", () => {
-    $("pomoModal").hidden = true;
-    $("modalBack").hidden = true;
+    $("pomoModal")?.setAttribute("hidden", "");
+    $("modalBack")?.setAttribute("hidden", "");
   });
 
   $("pomoApply")?.addEventListener("click", () => {
@@ -2046,8 +2034,8 @@ function bindUI(){
     saveState();
     resetPhase();
 
-    $("pomoModal").hidden = true;
-    $("modalBack").hidden = true;
+    $("pomoModal")?.setAttribute("hidden", "");
+    $("modalBack")?.setAttribute("hidden", "");
   });
 
   $("pomoReset")?.addEventListener("click", () => {
@@ -2056,9 +2044,17 @@ function bindUI(){
   });
 }
 
-/* =========================================================
+/* =========================
    INIT
-========================================================= */
+========================= */
+
+let taskTimerLoop = null;
+function startTaskTimerLoop(){
+  if(taskTimerLoop) clearInterval(taskTimerLoop);
+  taskTimerLoop = setInterval(() => {
+    renderMetaTimer();
+  }, 500);
+}
 
 function init(){
   applyTheme();
