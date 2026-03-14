@@ -25,6 +25,101 @@ const TIPS = [
   "Fais petit. Mais fais réel."
 ];
 
+const CELEBRATIONS = {
+  fantasy: [
+    {
+      title: "BANNIÈRE PLANTÉE",
+      msg: "Le territoire du bazar vient de perdre un village stratégique. Une chèvre prophétique confirme la victoire."
+    },
+    {
+      title: "CHANT DE VICTOIRE",
+      msg: "Une tâche est tombée. Au loin, les montagnes administratives ont gémi comme un classeur humide."
+    },
+    {
+      title: "DRAGON COMPTABLE TERRASSÉ",
+      msg: "La bête gardait ce dossier depuis mille ans. Tu l’as vaincue avec calme, et probablement sans cape."
+    },
+    {
+      title: "LE BÂTON A FRAPPÉ LE PAVÉ",
+      msg: "Quelque part, un Gandalf blanc approuve d’un hochement de sourcil et dit qu’en effet, tu passeras."
+    }
+  ],
+  dream: [
+    {
+      title: "ARCHITECTE DU RÉEL",
+      msg: "Tu viens de plier un morceau de journée dans le bon sens. La réalité, surprise, coopère."
+    },
+    {
+      title: "TOTEM : STABLE",
+      msg: "Le monde intérieur vacillait un peu. Puis tu as fait une vraie chose. C’est déjà une architecture."
+    },
+    {
+      title: "ORIGAMI DU TEMPS RÉUSSI",
+      msg: "Tu as pris une minute informe et tu en as fait une forme utile. Le réel trouve cela un peu vexant."
+    }
+  ],
+  ninja: [
+    {
+      title: "TECHNIQUE INTERDITE",
+      msg: "Coup propre. La tâche n’a même pas eu le temps de préparer un discours défensif."
+    },
+    {
+      title: "MODE INFILTRATION",
+      msg: "Tu es passé entre les lasers de la distraction. Personne n’a rien vu. Sauf le résultat."
+    },
+    {
+      title: "ASSASSINAT ADMINISTRATIF ÉLÉGANT",
+      msg: "Une formalité de moins. La paperasse a glissé dans le néant avec une politesse remarquable."
+    }
+  ],
+  med: [
+    {
+      title: "GESTE CHIRURGICAL",
+      msg: "Incision nette dans le chaos. Champ propre. Fermeture sans complication. L’équipe est satisfaite."
+    },
+    {
+      title: "DIAGNOSTIC : RÉSOLU",
+      msg: "Symptôme : tâche persistante. Traitement : action ciblée. Évolution : favorable, presque insolente."
+    },
+    {
+      title: "HÉMOSTASE PARFAITE",
+      msg: "Une fuite d’énergie vient d’être stoppée. Le pronostic fonctionnel s’améliore à vue d’œil."
+    }
+  ],
+  game: [
+    {
+      title: "QUÊTE VALIDÉE",
+      msg: "Objectif atteint. Butin obtenu : paix mentale légère, dignité +2, confusion -1."
+    },
+    {
+      title: "ACHIEVEMENT DÉBLOQUÉ",
+      msg: "« Je termine ce que je commence ». Succès rare. Les anciens pensaient cela impossible."
+    },
+    {
+      title: "INVENTAIRE ALLÉGÉ",
+      msg: "Une charge de moins dans le sac de quêtes. Tu marches déjà mieux, petit héros fonctionnel."
+    }
+  ],
+  empire: [
+    {
+      title: "EMPIRE ÉTENDU",
+      msg: "Un étorion de moins. Ton autorité sur la journée augmente d’un cran parfaitement délicieux."
+    },
+    {
+      title: "HÉROÏSME ADMINISTRATIF",
+      msg: "La bureaucratie a levé un sourcil. Tu l’as écrasé avec une action concrète. Très beau geste."
+    },
+    {
+      title: "RÉVOLTE ÉTOUFFÉE",
+      msg: "Une poche de désorganisation a tenté de résister. Elle a été traitée avec le tact brutal nécessaire."
+    },
+    {
+      title: "SAMWISE APPROUVE",
+      msg: "Ce n’est peut-être pas glorieux, mais c’est du vrai courage de jardinier : avancer encore d’un pas avec la casserole sur le dos."
+    }
+  ]
+};
+
 const defaultState = {
   ui: {
     mode: "clair",
@@ -41,9 +136,11 @@ const defaultState = {
     motivation: 2,
     tipsChance: 0.18,
     celebrationChance: 0.30,
+    celebrationAutoCloseSec: 7,
     keepListInFocus: true,
     listSort: "roulette",
-    includedCats: []
+    includedCats: [],
+    statsRangeDays: 30
   },
 
   baseline: {
@@ -84,13 +181,25 @@ const defaultState = {
   sets: {
     hospital: {
       enabled: true,
-      patients: 4,
+      patients: [
+        { id: uid(), name: "Patient 1" },
+        { id: uid(), name: "Patient 2" },
+        { id: uid(), name: "Patient 3" },
+        { id: uid(), name: "Patient 4" }
+      ],
       itemsPerPatient: ["Voir patient", "Note", "Traitement", "Dossier"],
       checks: {}
     },
     consult: {
       enabled: true,
-      patients: 6,
+      patients: [
+        { id: uid(), name: "Patient 1" },
+        { id: uid(), name: "Patient 2" },
+        { id: uid(), name: "Patient 3" },
+        { id: uid(), name: "Patient 4" },
+        { id: uid(), name: "Patient 5" },
+        { id: uid(), name: "Patient 6" }
+      ],
       itemsPerPatient: ["Voir patient", "Note", "Ordonnance", "Dossier"],
       checks: {}
     }
@@ -102,7 +211,8 @@ const defaultState = {
     tasksCompleted: 0,
     etorionsDone: 0,
     sessions: 0,
-    taskHistory: []
+    taskHistory: [],
+    celebrationsShown: 0
   }
 };
 
@@ -136,6 +246,22 @@ function deepAssign(target, source){
   }
 }
 
+function normalizePatients(setObj, fallbackCount){
+  if(Array.isArray(setObj.patients)){
+    setObj.patients = setObj.patients.map((p, i) => ({
+      id: p?.id || uid(),
+      name: p?.name || `Patient ${i + 1}`
+    }));
+    return;
+  }
+
+  const count = typeof setObj.patients === "number" ? setObj.patients : fallbackCount;
+  setObj.patients = Array.from({ length: count }, (_, i) => ({
+    id: uid(),
+    name: `Patient ${i + 1}`
+  }));
+}
+
 function migrateState(loaded){
   const merged = safeClone(defaultState);
   deepAssign(merged, loaded || {});
@@ -157,6 +283,9 @@ function migrateState(loaded){
   if(!Array.isArray(merged.stats.taskHistory)) merged.stats.taskHistory = [];
   if(!Array.isArray(merged.tasks)) merged.tasks = [];
 
+  normalizePatients(merged.sets.hospital, 4);
+  normalizePatients(merged.sets.consult, 6);
+
   merged.tasks.forEach(task => {
     if(!task.id) task.id = uid();
     if(!task.title && task.label) task.title = task.label;
@@ -169,6 +298,7 @@ function migrateState(loaded){
     if(typeof task.initialEtorions !== "number") task.initialEtorions = task.etorionsTotal;
     if(typeof task.done !== "boolean") task.done = false;
     if(typeof task.pinned !== "boolean") task.pinned = false;
+    if(typeof task.today !== "boolean") task.today = false;
     if(!task.cat) task.cat = "Inbox";
     if(!task.createdAt) task.createdAt = nowISO();
   });
@@ -402,7 +532,6 @@ function openOverlay(which){
   if(which === "notes") renderNotesOverlay();
   if(which === "typhonse") renderTyphonse();
   if(which === "kiffance"){
-    renderKiffance();
     suggestKiffance();
   }
   if(which === "stats") renderStatsPanel();
@@ -481,6 +610,7 @@ function importFromInbox(text){
       etorionsLeft: eto,
       initialEtorions: eto,
       pinned: false,
+      today: false,
       done: false,
       createdAt: nowISO(),
       doneAt: null
@@ -517,12 +647,16 @@ function importFromInbox(text){
 function activeTasks(){
   const included = state.settings.includedCats;
 
-  return state.tasks
-    .filter(task => !task.done)
-    .filter(task => {
-      if(!included || included.length === 0) return true;
+  let base = state.tasks.filter(task => !task.done);
+
+  if(included && included.length > 0){
+    base = base.filter(task => {
+      if(included.includes("CE JOUR") && task.today) return true;
       return included.includes(task.cat);
     });
+  }
+
+  return base;
 }
 
 function doneTasks(){
@@ -536,24 +670,45 @@ function getTask(id){
 function sortTasks(list){
   const mode = state.settings.listSort || "roulette";
 
+  const todayBoost = (task) => task.today ? -1 : 0;
+  const pinBoost = (task) => task.pinned ? -1 : 0;
+
   if(mode === "alpha"){
-    return [...list].sort((a, b) => a.title.localeCompare(b.title, "fr"));
+    return [...list].sort((a, b) => {
+      const ta = todayBoost(a) - todayBoost(b);
+      if(ta !== 0) return ta;
+      const pa = pinBoost(a) - pinBoost(b);
+      if(pa !== 0) return pa;
+      return a.title.localeCompare(b.title, "fr");
+    });
   }
 
   if(mode === "cat"){
     return [...list].sort((a, b) => {
+      const ta = todayBoost(a) - todayBoost(b);
+      if(ta !== 0) return ta;
+      const pa = pinBoost(a) - pinBoost(b);
+      if(pa !== 0) return pa;
       const catCompare = a.cat.localeCompare(b.cat, "fr");
       return catCompare !== 0 ? catCompare : a.title.localeCompare(b.title, "fr");
     });
   }
 
   if(mode === "ordre"){
-    return [...list].sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
+    return [...list].sort((a, b) => {
+      const ta = todayBoost(a) - todayBoost(b);
+      if(ta !== 0) return ta;
+      const pa = pinBoost(a) - pinBoost(b);
+      if(pa !== 0) return pa;
+      return (a.createdAt || "").localeCompare(b.createdAt || "");
+    });
   }
 
   return [...list].sort((a, b) => {
-    if(a.pinned && !b.pinned) return -1;
-    if(!a.pinned && b.pinned) return 1;
+    const ta = todayBoost(a) - todayBoost(b);
+    if(ta !== 0) return ta;
+    const pa = pinBoost(a) - pinBoost(b);
+    if(pa !== 0) return pa;
     return (a.createdAt || "").localeCompare(b.createdAt || "");
   });
 }
@@ -570,7 +725,8 @@ function ensureCurrentTask(){
 
   if(!current || current.done){
     const pinned = actives.find(task => task.pinned);
-    state.currentTaskId = (pinned || actives[0]).id;
+    const today = actives.find(task => task.today);
+    state.currentTaskId = (today || pinned || actives[0]).id;
     state.currentTaskStart = Date.now();
   }
 }
@@ -609,10 +765,11 @@ function roulettePick(){
   if(tasks.length === 0) return null;
 
   const pinned = tasks.filter(task => task.pinned);
-  let pool = pinned.length ? pinned : [...tasks];
+  const today = tasks.filter(task => task.today);
+  let pool = today.length ? today : (pinned.length ? pinned : [...tasks]);
 
   pool.sort((a, b) => (a.etorionsLeft || a.etorionsTotal) - (b.etorionsLeft || b.etorionsTotal));
-  const sample = pool.slice(0, Math.min(3, pool.length));
+  const sample = pool.slice(0, Math.min(4, pool.length));
 
   return sample[Math.floor(Math.random() * sample.length)];
 }
@@ -623,6 +780,14 @@ function selectTask(id){
 
   state.currentTaskId = id;
   state.currentTaskStart = Date.now();
+  saveState();
+  renderAll();
+}
+
+function toggleTodayTask(id){
+  const task = getTask(id);
+  if(!task || task.done) return;
+  task.today = !task.today;
   saveState();
   renderAll();
 }
@@ -692,6 +857,7 @@ function completeTask(id = state.currentTaskId){
   });
 
   snapshotDay();
+  maybeShowCelebration();
   ensureCurrentTask();
   saveState();
   renderAll();
@@ -763,6 +929,209 @@ function doUndo(){
   saveState();
   renderAll();
   status("Retour arrière.");
+}
+
+/* =========================
+   CELEBRATIONS + FX
+========================= */
+
+let celebrateTimer = null;
+
+function weightedCelebrationPool(){
+  const fatigue = state.settings.fatigue;
+  const motivation = state.settings.motivation;
+
+  const weights = {
+    fantasy: 1 + (fatigue >= 3 ? 0.3 : 0) + (motivation >= 3 ? 0.2 : 0),
+    dream:   1 + (fatigue >= 3 ? 0.5 : 0),
+    ninja:   1 + (motivation >= 3 ? 0.6 : 0),
+    med:     1 + (fatigue >= 2 ? 0.4 : 0),
+    game:    1 + (motivation >= 2 ? 0.5 : 0),
+    empire:  1 + (motivation >= 3 ? 0.7 : 0)
+  };
+
+  const pool = [];
+  Object.entries(CELEBRATIONS).forEach(([family, arr]) => {
+    const w = Math.max(1, Math.round((weights[family] || 1) * 2));
+    for(let i=0; i<w; i++) pool.push(...arr.map(x => ({ ...x, family })));
+  });
+  return pool;
+}
+
+function pickCelebration(){
+  const pool = weightedCelebrationPool();
+  return pickRandom(pool);
+}
+
+function ensureCelebrationShell(){
+  let shell = $("celebrateShell");
+  if(shell) return shell;
+
+  shell = document.createElement("div");
+  shell.id = "celebrateShell";
+  shell.setAttribute("hidden", "");
+  shell.style.position = "fixed";
+  shell.style.inset = "0";
+  shell.style.zIndex = "9999";
+  shell.style.display = "grid";
+  shell.style.placeItems = "center";
+  shell.style.pointerEvents = "none";
+
+  shell.innerHTML = `
+    <canvas id="celebrateCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
+    <div id="celebrateCard" style="
+      min-width:min(760px,92vw);
+      max-width:min(760px,92vw);
+      padding:20px 22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      box-shadow:0 18px 44px rgba(0,0,0,.18);
+      text-align:center;
+      color:white;
+      position:relative;
+      overflow:hidden;
+    ">
+      <div id="celebrateTitle" style="font-size:28px;font-weight:800;letter-spacing:.04em;margin-bottom:10px;"></div>
+      <div id="celebrateMsg" style="font-size:16px;line-height:1.45;opacity:.96;"></div>
+    </div>
+  `;
+  document.body.appendChild(shell);
+  return shell;
+}
+
+function runFireworks(canvas){
+  if(!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = `${w}px`;
+  canvas.style.height = `${h}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const particles = [];
+  const colors = ["#ffd86b", "#ff8e72", "#8fe3ff", "#bfa7ff", "#ffffff", "#9ee27f"];
+
+  for(let burst = 0; burst < 4; burst++){
+    const cx = Math.random() * w * 0.8 + w * 0.1;
+    const cy = Math.random() * h * 0.45 + h * 0.10;
+    const count = 40 + Math.floor(Math.random() * 22);
+
+    for(let i=0; i<count; i++){
+      const angle = (Math.PI * 2 * i) / count;
+      const speed = 1.6 + Math.random() * 3.8;
+      particles.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        alpha: 1,
+        size: 1.5 + Math.random() * 2.8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        gravity: 0.03 + Math.random() * 0.03
+      });
+    }
+  }
+
+  const confetti = [];
+  for(let i=0; i<120; i++){
+    confetti.push({
+      x: Math.random() * w,
+      y: -20 - Math.random() * 100,
+      vx: -1 + Math.random() * 2,
+      vy: 1.5 + Math.random() * 2.5,
+      rot: Math.random() * Math.PI,
+      vr: -0.08 + Math.random() * 0.16,
+      size: 4 + Math.random() * 6,
+      alpha: 0.8 + Math.random() * 0.2,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+
+  let frame = 0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.alpha *= 0.985;
+    });
+
+    confetti.forEach(c => {
+      c.x += c.vx;
+      c.y += c.vy;
+      c.rot += c.vr;
+      c.vy += 0.02;
+      c.alpha *= 0.995;
+    });
+
+    particles.forEach(p => {
+      if(p.alpha <= 0.03) return;
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    confetti.forEach(c => {
+      if(c.alpha <= 0.04) return;
+      ctx.save();
+      ctx.globalAlpha = c.alpha;
+      ctx.translate(c.x, c.y);
+      ctx.rotate(c.rot);
+      ctx.fillStyle = c.color;
+      ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.7);
+      ctx.restore();
+    });
+
+    ctx.globalAlpha = 1;
+
+    const alive = particles.some(p => p.alpha > 0.03) || confetti.some(c => c.alpha > 0.04);
+    if(frame < 180 && alive){
+      requestAnimationFrame(tick);
+    }else{
+      ctx.clearRect(0, 0, w, h);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+function maybeShowCelebration(force = false){
+  if(!force && Math.random() > state.settings.celebrationChance) return;
+
+  const cele = pickCelebration();
+  if(!cele) return;
+
+  const shell = ensureCelebrationShell();
+  const title = $("celebrateTitle");
+  const msg = $("celebrateMsg");
+  const canvas = $("celebrateCanvas");
+
+  if(title) title.textContent = cele.title;
+  if(msg) msg.textContent = cele.msg;
+
+  shell.removeAttribute("hidden");
+  shell.style.pointerEvents = "none";
+  runFireworks(canvas);
+
+  state.stats.celebrationsShown += 1;
+  saveState();
+
+  if(celebrateTimer) clearTimeout(celebrateTimer);
+  celebrateTimer = setTimeout(() => {
+    shell.setAttribute("hidden", "");
+  }, clamp(state.settings.celebrationAutoCloseSec, 3, 15) * 1000);
 }
 
 /* =========================
@@ -877,13 +1246,14 @@ function renderBelowList(){
     return `
       <div class="card" style="${isCurrent ? "outline:2px solid color-mix(in srgb, var(--accent) 40%, transparent);" : ""}">
         <div class="card__left">
-          <div class="card__title">${escapeHTML(task.title)}</div>
+          <div class="card__title">${task.today ? "◆ " : ""}${escapeHTML(task.title)}</div>
           <div class="card__sub">${escapeHTML(task.cat)} · ${task.etorionsLeft}/${task.etorionsTotal}</div>
         </div>
 
         <div class="card__actions">
           <button class="icon-btn" data-below-act="up" data-id="${task.id}" title="Monter">↑</button>
           <button class="icon-btn" data-below-act="down" data-id="${task.id}" title="Descendre">↓</button>
+          <button class="icon-btn" data-below-act="today" data-id="${task.id}" title="CE JOUR">${task.today ? "◆" : "◇"}</button>
           <button class="icon-btn" data-below-act="pin" data-id="${task.id}" title="Épingler">${task.pinned ? "■" : "□"}</button>
           <button class="icon-btn" data-below-act="sel" data-id="${task.id}" title="Sélectionner">▶</button>
           <button class="icon-btn" data-below-act="done" data-id="${task.id}" title="Terminer">✓</button>
@@ -902,6 +1272,7 @@ function renderBelowList(){
       if(act === "up") moveTask(id, -1);
       if(act === "down") moveTask(id, 1);
       if(act === "pin") task.pinned = !task.pinned;
+      if(act === "today") toggleTodayTask(id);
       if(act === "sel") selectTask(id);
       if(act === "done") completeTask(id);
 
@@ -918,6 +1289,7 @@ function renderBelowList(){
 function categories(){
   const set = new Set(state.tasks.map(task => task.cat || "Inbox"));
   const out = Array.from(set).sort((a, b) => a.localeCompare(b, "fr"));
+  out.unshift("CE JOUR");
   out.unshift("Toutes");
   return out;
 }
@@ -926,17 +1298,19 @@ function renderCatFilter(){
   const select = $("catFilter");
   if(!select) return;
 
-  const previous = select.value || "Toutes";
-  select.innerHTML = "";
+  const selected = state.settings.includedCats || [];
 
-  categories().forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-    select.appendChild(option);
-  });
+  select.innerHTML = categories().map(cat => `
+    <option value="${escapeHTML(cat)}" ${selected.includes(cat) ? "selected" : ""}>${escapeHTML(cat)}</option>
+  `).join("");
+}
 
-  select.value = categories().includes(previous) ? previous : "Toutes";
+function syncIncludedCatsFromSelect(){
+  const sel = $("catFilter");
+  if(!sel) return;
+  const values = Array.from(sel.selectedOptions).map(o => o.value).filter(v => v !== "Toutes");
+  state.settings.includedCats = values;
+  saveState();
 }
 
 function renderTasksPanel(){
@@ -945,7 +1319,6 @@ function renderTasksPanel(){
   const root = $("taskList");
   if(!root) return;
 
-  const cat = $("catFilter")?.value || "Toutes";
   const view = $("viewFilter")?.value || "active";
   state.settings.listSort = $("sortFilter")?.value || state.settings.listSort;
 
@@ -953,7 +1326,14 @@ function renderTasksPanel(){
 
   if(view === "active") list = list.filter(task => !task.done);
   if(view === "done") list = list.filter(task => task.done);
-  if(cat !== "Toutes") list = list.filter(task => (task.cat || "Inbox") === cat);
+
+  const included = state.settings.includedCats || [];
+  if(included.length > 0 && !included.includes("Toutes")){
+    list = list.filter(task => {
+      if(included.includes("CE JOUR") && task.today) return true;
+      return included.includes(task.cat);
+    });
+  }
 
   list = sortTasks(list);
 
@@ -965,12 +1345,13 @@ function renderTasksPanel(){
   root.innerHTML = list.map(task => `
     <div class="card">
       <div class="card__left">
-        <div class="card__title">${escapeHTML(task.title)}</div>
+        <div class="card__title">${task.today ? "◆ " : ""}${escapeHTML(task.title)}</div>
         <div class="card__sub">${escapeHTML(task.cat)} · ${task.etorionsLeft}/${task.etorionsTotal}${task.done ? " · Finie" : ""}</div>
       </div>
 
       <div class="card__actions">
         ${!task.done ? `<button class="icon-btn" data-task-act="sel" data-id="${task.id}" title="Sélectionner">${task.id === state.currentTaskId ? "★" : "▶"}</button>` : ""}
+        ${!task.done ? `<button class="icon-btn" data-task-act="today" data-id="${task.id}" title="CE JOUR">${task.today ? "◆" : "◇"}</button>` : ""}
         ${!task.done ? `<button class="icon-btn" data-task-act="done" data-id="${task.id}" title="Terminer">✓</button>` : `<button class="icon-btn" data-task-act="restore" data-id="${task.id}" title="Restaurer">↩</button>`}
         <button class="icon-btn" data-task-act="edit" data-id="${task.id}" title="Éditer">≋</button>
         <button class="icon-btn" data-task-act="del" data-id="${task.id}" title="Supprimer">×</button>
@@ -985,6 +1366,7 @@ function renderTasksPanel(){
 
       if(act === "sel") selectTask(id);
       if(act === "done") completeTask(id);
+      if(act === "today") toggleTodayTask(id);
       if(act === "restore") restoreTask(id);
       if(act === "edit") editTaskPrompt(id);
       if(act === "del") deleteTask(id);
@@ -1147,7 +1529,6 @@ function pickKiffance(){
 
 function suggestKiffance(){
   lastKiffSuggestion = pickKiffance();
-
   if($("kiffSuggestionBox")) $("kiffSuggestionBox").textContent = lastKiffSuggestion;
   if($("overlayKiffSuggestion")) $("overlayKiffSuggestion").textContent = lastKiffSuggestion;
 }
@@ -1167,6 +1548,7 @@ function addKiffanceAsTask(){
     etorionsLeft: 1,
     initialEtorions: 1,
     pinned: false,
+    today: true,
     done: false,
     createdAt: nowISO(),
     doneAt: null
@@ -1180,49 +1562,9 @@ function addKiffanceAsTask(){
   renderAll();
 }
 
+/* Surprise only: pas de liste détaillée visible */
 function renderKiffance(){
-  const root = $("kiffList");
-
-  if(root){
-    if(state.kiffances.length === 0){
-      root.innerHTML = `<div class="muted small">Aucune kiffance.</div>`;
-    }else{
-      root.innerHTML = state.kiffances.map((kiff, index) => `
-        <div class="card">
-          <div class="card__left">
-            <div class="card__title">${escapeHTML(kiff)}</div>
-            <div class="card__sub">Récompense / pause utile</div>
-          </div>
-
-          <div class="card__actions">
-            <button class="icon-btn" data-kiff-del="${index}" title="Supprimer">×</button>
-          </div>
-        </div>
-      `).join("");
-
-      root.querySelectorAll("[data-kiff-del]").forEach(btn => {
-        btn.onclick = () => {
-          const index = parseInt(btn.dataset.kiffDel, 10);
-          pushUndo("kiffdel");
-          state.kiffances.splice(index, 1);
-          saveState();
-          renderKiffance();
-        };
-      });
-    }
-  }
-
-  if($("overlayKiffList")){
-    $("overlayKiffList").innerHTML = state.kiffances.length
-      ? state.kiffances.map(kiff => `
-          <div class="card">
-            <div class="card__left">
-              <div class="card__title">${escapeHTML(kiff)}</div>
-            </div>
-          </div>
-        `).join("")
-      : `<div class="muted small">Aucune kiffance enregistrée.</div>`;
-  }
+  suggestKiffance();
 }
 
 /* =========================
@@ -1338,16 +1680,16 @@ function initSetsChecksForToday(){
   }
 }
 
-function setKeyItem(setName, patientIndex, itemIndex){
-  return `${setName}|p${patientIndex}|i${itemIndex}`;
+function setKeyItem(setName, patientId, itemLabel){
+  return `${setName}|${patientId}|${itemLabel}`;
 }
 
-function toggleSetCheck(setName, patientIndex, itemIndex){
+function toggleSetCheck(setName, patientId, itemLabel){
   initSetsChecksForToday();
 
   const dk = dayKey();
   const set = state.sets[setName];
-  const key = setKeyItem(setName, patientIndex, itemIndex);
+  const key = setKeyItem(setName, patientId, itemLabel);
 
   set.checks[dk][key] = !set.checks[dk][key];
 
@@ -1365,6 +1707,33 @@ function resetSetToday(setName){
   snapshotDay();
 }
 
+function updateSetPatientCount(setName, nextCount){
+  const count = clamp(parseInt(nextCount, 10) || 1, 1, 30);
+  const current = state.sets[setName].patients || [];
+
+  if(current.length < count){
+    while(current.length < count){
+      current.push({ id: uid(), name: `Patient ${current.length + 1}` });
+    }
+  }else if(current.length > count){
+    current.length = count;
+  }
+
+  state.sets[setName].patients = current;
+  saveState();
+  renderSetsPanel();
+}
+
+function renameSetPatient(setName, patientId, nextName){
+  const set = state.sets[setName];
+  const patient = set.patients.find(p => p.id === patientId);
+  if(!patient) return;
+  const cleaned = String(nextName || "").trim();
+  patient.name = cleaned || "Patient";
+  saveState();
+  renderSetsPanel();
+}
+
 function summarizeSetsToday(){
   initSetsChecksForToday();
 
@@ -1374,7 +1743,7 @@ function summarizeSetsToday(){
   for(const key of ["hospital", "consult"]){
     const set = state.sets[key];
     const checks = set.checks?.[dk] || {};
-    const total = set.patients * set.itemsPerPatient.length;
+    const total = set.patients.length * set.itemsPerPatient.length;
     const done = Object.values(checks).filter(Boolean).length;
     out[key] = { done, total };
   }
@@ -1392,34 +1761,42 @@ function renderSetsPanel(){
   const buildSet = (setKey, title) => {
     const set = state.sets[setKey];
     const checks = set.checks?.[dk] || {};
-    const items = set.itemsPerPatient;
 
     let html = `
       <div class="soft-card">
         <div class="card__title">${title}</div>
-        <div class="card__sub">${Object.values(checks).filter(Boolean).length}/${set.patients * items.length}</div>
+        <div class="card__sub">${Object.values(checks).filter(Boolean).length}/${set.patients.length * set.itemsPerPatient.length}</div>
     `;
 
-    for(let p = 1; p <= set.patients; p++){
-      html += `<div class="divider"></div><div class="card__sub">Patient ${p}</div>`;
+    set.patients.forEach((patient, idx) => {
+      html += `
+        <div class="divider"></div>
+        <div class="row row--wrap">
+          <div class="grow">
+            <label class="muted small">Patient ${idx + 1}</label>
+            <input class="field input" data-patient-rename="${setKey}|${patient.id}" value="${escapeHTML(patient.name)}">
+          </div>
+        </div>
+      `;
 
-      items.forEach((item, index) => {
-        const key = setKeyItem(setKey, p, index);
+      set.itemsPerPatient.forEach(item => {
+        const key = setKeyItem(setKey, patient.id, item);
         const checked = !!checks[key];
 
         html += `
           <div class="card">
             <div class="card__left">
-              <div class="card__title">${escapeHTML(item)}</div>
-            </div>
-
-            <div class="card__actions">
-              <button class="icon-btn" data-set="${setKey}" data-p="${p}" data-i="${index}" title="Cocher">${checked ? "✓" : "·"}</button>
+              <button
+                class="btn ${checked ? "btn--primary" : "btn--ghost"}"
+                type="button"
+                data-set-click="${setKey}|${patient.id}|${encodeURIComponent(item)}"
+                style="border-radius:10px;"
+              >${escapeHTML(item)}</button>
             </div>
           </div>
         `;
       });
-    }
+    });
 
     html += `</div>`;
     return html;
@@ -1427,14 +1804,18 @@ function renderSetsPanel(){
 
   root.innerHTML = buildSet("hospital", "HOSPITALIER") + buildSet("consult", "CONSULTATION");
 
-  root.querySelectorAll("[data-set]").forEach(btn => {
+  root.querySelectorAll("[data-set-click]").forEach(btn => {
     btn.onclick = () => {
-      toggleSetCheck(
-        btn.dataset.set,
-        parseInt(btn.dataset.p, 10),
-        parseInt(btn.dataset.i, 10)
-      );
+      const [setName, patientId, itemEncoded] = btn.dataset.setClick.split("|");
+      toggleSetCheck(setName, patientId, decodeURIComponent(itemEncoded));
     };
+  });
+
+  root.querySelectorAll("[data-patient-rename]").forEach(input => {
+    input.addEventListener("change", () => {
+      const [setName, patientId] = input.dataset.patientRename.split("|");
+      renameSetPatient(setName, patientId, input.value);
+    });
   });
 }
 
@@ -1519,6 +1900,40 @@ function exportTodayText(){
   return lines.join("\n");
 }
 
+function statsSeries(days = state.settings.statsRangeDays || 30){
+  const today = new Date();
+  const rows = [];
+  for(let i = days - 1; i >= 0; i--){
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = dayKey(d);
+    const h = state.history.find(x => x.day === key);
+    rows.push({
+      day: key,
+      tasks: h?.doneTasks || 0,
+      etorions: h?.doneEtorions || 0
+    });
+  }
+  return rows;
+}
+
+function renderMiniBars(series, key, maxValue){
+  return series.map(row => {
+    const v = row[key];
+    const width = maxValue <= 0 ? 0 : Math.max(6, Math.round((v / maxValue) * 100));
+    const dayNum = row.day.slice(8, 10);
+    return `
+      <div style="display:grid;grid-template-columns:34px 1fr 32px;gap:8px;align-items:center;">
+        <div class="card__sub">${dayNum}</div>
+        <div style="height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.08);">
+          <div style="height:100%;width:${width}%;background:var(--accent);border-radius:999px;"></div>
+        </div>
+        <div class="card__sub" style="text-align:right;">${v}</div>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderHistoryPanel(){
   const root = $("historyContent");
   if(root){
@@ -1573,24 +1988,34 @@ function renderHistoryPanel(){
 function renderStatsPanel(){
   const progress = computeProgress();
   const dopamine = dopamineScore();
+  const series = statsSeries();
+  const maxTasks = Math.max(1, ...series.map(s => s.tasks));
+  const maxEto = Math.max(1, ...series.map(s => s.etorions));
 
-  const lines = [
-    `Tâches complétées : ${state.stats.tasksCompleted}`,
-    `Étorions dégommés : ${state.stats.etorionsDone}`,
-    `Sessions : ${state.stats.sessions}`,
-    `Progression restante : ${progress.pct}%`,
-    `Dopamine score : ${dopamine}%`,
-    `Habitudes : ${state.habits.length}`,
-    `Tâches actives : ${activeTasks().length}`
-  ];
+  const html = `
+    <div class="soft-card">
+      <div class="card__title">Vue d’ensemble</div>
+      <div class="card__sub">Progression restante : ${progress.pct}% · Dopamine score : ${dopamine}%</div>
+      <div class="card__sub">Tâches complétées : ${state.stats.tasksCompleted}</div>
+      <div class="card__sub">Étorions dégommés : ${state.stats.etorionsDone}</div>
+      <div class="card__sub">Sessions : ${state.stats.sessions}</div>
+      <div class="card__sub">Célébrations affichées : ${state.stats.celebrationsShown}</div>
+    </div>
 
-  const html = lines.map(line => `
-    <div class="card">
-      <div class="card__left">
-        <div class="card__title">${escapeHTML(line)}</div>
+    <div class="soft-card">
+      <div class="card__title">Tâches / jour</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        ${renderMiniBars(series, "tasks", maxTasks)}
       </div>
     </div>
-  `).join("");
+
+    <div class="soft-card">
+      <div class="card__title">Étorions / jour</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        ${renderMiniBars(series, "etorions", maxEto)}
+      </div>
+    </div>
+  `;
 
   if($("statsContent")) $("statsContent").innerHTML = html;
   if($("statsContentPanel")) $("statsContentPanel").innerHTML = html;
@@ -1933,7 +2358,11 @@ function bindUI(){
     if($("inboxText")) $("inboxText").value = "";
   });
 
-  $("catFilter")?.addEventListener("change", renderTasksPanel);
+  $("catFilter")?.addEventListener("change", () => {
+    syncIncludedCatsFromSelect();
+    renderTasksPanel();
+  });
+
   $("viewFilter")?.addEventListener("change", renderTasksPanel);
 
   $("sortFilter")?.addEventListener("change", () => {
@@ -1950,7 +2379,7 @@ function bindUI(){
     state.kiffances.push(txt);
     if($("kiffNew")) $("kiffNew").value = "";
     saveState();
-    renderKiffance();
+    suggestKiffance();
   });
 
   $("kiffSuggest")?.addEventListener("click", suggestKiffance);
@@ -1971,15 +2400,11 @@ function bindUI(){
   });
 
   $("hospPatients")?.addEventListener("change", (e) => {
-    state.sets.hospital.patients = clamp(parseInt(e.target.value, 10) || 4, 1, 20);
-    saveState();
-    renderSetsPanel();
+    updateSetPatientCount("hospital", e.target.value);
   });
 
   $("consPatients")?.addEventListener("change", (e) => {
-    state.sets.consult.patients = clamp(parseInt(e.target.value, 10) || 6, 1, 30);
-    saveState();
-    renderSetsPanel();
+    updateSetPatientCount("consult", e.target.value);
   });
 
   $("hospResetToday")?.addEventListener("click", () => resetSetToday("hospital"));
@@ -1998,7 +2423,7 @@ function bindUI(){
   });
 
   $("testTipBtn")?.addEventListener("click", () => maybeShowTip(true));
-  $("testCeleBtn")?.addEventListener("click", () => status("Célébration test. Le cosmos te remarque.", 5000));
+  $("testCeleBtn")?.addEventListener("click", () => maybeShowCelebration(true));
 
   $("notesArea")?.addEventListener("input", scheduleNotesSave);
   $("remindersArea")?.addEventListener("input", scheduleNotesSave);
@@ -2073,8 +2498,8 @@ function init(){
   resetPhase();
   startTaskTimerLoop();
 
-  if($("hospPatients")) $("hospPatients").value = state.sets.hospital.patients;
-  if($("consPatients")) $("consPatients").value = state.sets.consult.patients;
+  if($("hospPatients")) $("hospPatients").value = state.sets.hospital.patients.length;
+  if($("consPatients")) $("consPatients").value = state.sets.consult.patients.length;
 }
 
 document.addEventListener("DOMContentLoaded", init);
