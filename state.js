@@ -221,6 +221,14 @@ const defaultState = {
 };
 
 let state = loadState();
+let notesSaveTimer = null;
+let celebrateTimer = null;
+let pomoTimer = null;
+let pomoRunning = false;
+let remainingMs = 0;
+let taskTimerLoop = null;
+let statusTimer = null;
+let lastKiffSuggestion = "";
 
 /* =========================
    STORAGE
@@ -375,7 +383,6 @@ function pickSubtitle(){
   return pickRandom(SUBLINES);
 }
 
-let statusTimer = null;
 function status(message, ms = 4200){
   const el = $("statusSpot");
   if(!el) return;
@@ -389,7 +396,7 @@ function status(message, ms = 4200){
 }
 
 /* =========================
-   DOM SAFETY
+   DOM / CSS VARS
 ========================= */
 
 function setRootCssVars(){
@@ -423,6 +430,7 @@ function applyTheme(){
   document.body.classList.toggle("is-serious", !!state.ui.serious);
   document.body.classList.toggle("is-focus", !!state.ui.focus);
   document.body.setAttribute("data-font", state.ui.font);
+
   setRootCssVars();
 
   if($("modeToggle")){
@@ -458,11 +466,8 @@ function applyTheme(){
 function showPanelBack(show){
   const el = $("panelBack");
   if(!el) return;
-  if(show){
-    el.removeAttribute("hidden");
-  }else{
-    el.setAttribute("hidden", "");
-  }
+  if(show) el.removeAttribute("hidden");
+  else el.setAttribute("hidden", "");
 }
 
 function openPanel(which){
@@ -532,11 +537,8 @@ function bindTabs(){
 function showModalBack(show){
   const el = $("modalBack");
   if(!el) return;
-  if(show){
-    el.removeAttribute("hidden");
-  }else{
-    el.setAttribute("hidden", "");
-  }
+  if(show) el.removeAttribute("hidden");
+  else el.setAttribute("hidden", "");
 }
 
 function closeOverlay(){
@@ -574,9 +576,7 @@ function openOverlay(which){
 
   if(which === "notes") renderNotesOverlay();
   if(which === "typhonse") renderTyphonse();
-  if(which === "kiffance"){
-    suggestKiffance();
-  }
+  if(which === "kiffance") suggestKiffance();
   if(which === "stats") renderStatsPanel();
 }
 
@@ -595,7 +595,7 @@ function closePomoModal(){
 }
 
 /* =========================
-   TASK IMPORT + ESTIMATION
+   IMPORT + ESTIMATION
 ========================= */
 
 function isAllCapsLine(line){
@@ -626,7 +626,6 @@ function parseTaskLine(line){
   if(!title) return null;
 
   if(etorions !== null) etorions = clamp(etorions, 1, 99);
-
   return { title, etorions };
 }
 
@@ -878,7 +877,6 @@ function deleteTask(id){
   if(!task) return;
 
   pushUndo("delete");
-
   state.tasks = state.tasks.filter(t => t.id !== id);
 
   if(!task.done){
@@ -989,8 +987,6 @@ function doUndo(){
 /* =========================
    CELEBRATIONS + FX
 ========================= */
-
-let celebrateTimer = null;
 
 function weightedCelebrationPool(){
   const fatigue = state.settings.fatigue;
@@ -1192,7 +1188,7 @@ function maybeShowCelebration(force = false){
 }
 
 /* =========================
-   HUD + CENTRAL RENDER
+   HUB RENDER
 ========================= */
 
 function renderSubtitle(){
@@ -1443,8 +1439,6 @@ function addNoteEntry(text){
   saveState();
 }
 
-let notesSaveTimer = null;
-
 function scheduleNotesSave(){
   if(notesSaveTimer) clearTimeout(notesSaveTimer);
 
@@ -1570,8 +1564,6 @@ function renderTyphonse(){
 /* =========================
    KIFFANCE
 ========================= */
-
-let lastKiffSuggestion = "";
 
 function pickKiffance(){
   if(!state.kiffances.length) return "Bois de l’eau. Respire. Continue.";
@@ -2104,10 +2096,6 @@ function maybeShowTip(force = false){
    POMODORO
 ========================= */
 
-let pomoTimer = null;
-let pomoRunning = false;
-let remainingMs = 0;
-
 function currentPhaseMinutes(){
   return state.pomodoro.phase === "break" ? state.pomodoro.breakMin : state.pomodoro.workMin;
 }
@@ -2284,7 +2272,6 @@ function renderAll(){
    TIMERS
 ========================= */
 
-let taskTimerLoop = null;
 function startTaskTimerLoop(){
   if(taskTimerLoop) clearInterval(taskTimerLoop);
   taskTimerLoop = setInterval(() => {
@@ -2523,15 +2510,6 @@ function bindUI(){
 /* =========================
    INIT
 ========================= */
-
-let taskTimerLoop = null;
-
-function startTaskTimerLoop(){
-  if(taskTimerLoop) clearInterval(taskTimerLoop);
-  taskTimerLoop = setInterval(() => {
-    renderMetaTimer();
-  }, 500);
-}
 
 function init(){
   applyTheme();
