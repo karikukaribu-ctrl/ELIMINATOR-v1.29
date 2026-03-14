@@ -13,40 +13,43 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header id="topBar" class="topbar">
-    <div class="topbar__side topbar__side--left">
-      <button id="btnLeft" class="icon-btn ghost-btn" type="button" aria-label="Ouvrir le panneau gauche">≡</button>
+  <div class="bg-orbs" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__left">
+      <button id="btnLeft" class="icon-btn" type="button" aria-label="Ouvrir panneau gauche">≡</button>
     </div>
 
     <div class="topbar__center">
       <div class="top-actions">
-        <button id="modeToggle" class="top-btn" type="button" aria-pressed="false">Clair</button>
+        <button id="modeToggle" class="top-btn" type="button">Clair</button>
         <button id="seasonCycle" class="top-btn" type="button">Automne</button>
-        <button id="seriousToggle" class="top-btn" type="button" aria-pressed="false">Sérieux</button>
-        <button id="focusBtn" class="top-btn" type="button" aria-pressed="false">Focus</button>
-        <button id="listToggleBtn" class="top-btn" type="button" aria-pressed="false">Liste</button>
+        <button id="seriousToggle" class="top-btn" type="button">Sérieux</button>
+        <button id="focusBtn" class="top-btn" type="button">Focus</button>
+        <button id="listToggleBtn" class="top-btn" type="button">Liste</button>
         <button id="setsToggleBtn" class="top-btn" type="button">Sets</button>
       </div>
     </div>
 
-    <div class="topbar__side topbar__side--right">
-      <button id="btnRight" class="icon-btn ghost-btn" type="button" aria-label="Ouvrir le panneau droit">⋮</button>
+    <div class="topbar__right">
+      <button id="btnRight" class="icon-btn" type="button" aria-label="Ouvrir panneau droit">⋮</button>
     </div>
   </header>
 
-  <div id="panelBack" class="panel-back" aria-hidden="true"></div>
+  <div id="panelBack" class="panel-back" hidden></div>
+  <div id="modalBack" class="modal-back" hidden></div>
 
   <!-- PANNEAU GAUCHE -->
-  <aside id="leftPanel" class="side-panel side-panel--left" aria-label="Panneau gauche">
-    <div class="side-panel__top">
-      <div class="panel-title">Menu</div>
-      <div class="side-panel__tools">
-        <input id="leftPanelWidth" class="panel-width-range" type="range" min="300" max="620" step="10" value="380" title="Largeur panneau gauche">
-        <button id="leftClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer le panneau gauche">×</button>
+  <aside id="leftPanel" class="panel panel--left" hidden aria-label="Panneau gauche">
+    <div class="panel__head">
+      <div class="panel__title">Menu</div>
+      <div class="panel__head-tools">
+        <input id="leftPanelWidth" class="panel-range" type="range" min="300" max="620" step="10" value="380" title="Largeur panneau gauche">
+        <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
       </div>
     </div>
 
-    <nav class="panel-tabs" aria-label="Onglets panneau gauche">
+    <nav class="tabs">
       <button class="tab-btn is-active" data-lefttab="inbox" type="button">Inbox</button>
       <button class="tab-btn" data-lefttab="tasks" type="button">Tâches</button>
       <button class="tab-btn" data-lefttab="kiffance" type="button">Kiffance</button>
@@ -54,56 +57,45 @@
       <button class="tab-btn" data-lefttab="export" type="button">Export</button>
     </nav>
 
-    <div class="side-panel__body">
-      <!-- INBOX -->
+    <div class="panel__body">
       <section id="left-inbox" class="tab-page is-show">
-        <p class="muted helper">
+        <p class="helper">
           Une ligne = une tâche. Une ligne en MAJUSCULES = une catégorie.
-          <br>
-          Exemple :
           <br><span class="mono">ADMIN</span>
           <br><span class="mono">Répondre à Anna - 2</span>
           <br><span class="mono">Rapport patient 3</span>
         </p>
 
-        <textarea
-          id="inboxText"
-          class="field textarea"
-          rows="12"
-          placeholder="ADMIN
+        <textarea id="inboxText" class="field textarea" rows="12" placeholder="ADMIN
 Répondre à Anna - 2
 Rapport patient 3
 
 PERSO
 Batterie 2
-Ranger bureau 1"
-        ></textarea>
+Ranger bureau 1"></textarea>
 
-        <div class="inline-actions">
-          <button id="inboxAdd" class="action-btn action-btn--strong" type="button">Ajouter</button>
+        <div class="row">
+          <button id="inboxAdd" class="action-btn action-btn--accent" type="button">Ajouter</button>
           <button id="inboxClear" class="action-btn" type="button">Effacer</button>
         </div>
 
-        <div class="soft-sep"></div>
-
         <div class="micro-stats">
-          <div class="micro-stat">Actives <b id="statActive">0</b></div>
-          <div class="micro-stat">Finies <b id="statDone">0</b></div>
-          <div class="micro-stat">Étorions <b id="statEtorions">0</b></div>
+          <span>Actives <b id="statActive">0</b></span>
+          <span>Finies <b id="statDone">0</b></span>
+          <span>Étorions <b id="statEtorions">0</b></span>
         </div>
       </section>
 
-      <!-- TASKS -->
       <section id="left-tasks" class="tab-page">
         <div class="field-group">
-          <label for="catFilter" class="label-mini">Catégories</label>
+          <label class="label-mini" for="catFilter">Catégories</label>
           <select id="catFilter" class="field select select-multiple" multiple size="8"></select>
-          <div class="helper muted">Tu peux sélectionner plusieurs catégories, y compris <b>CE JOUR</b>.</div>
+          <div class="helper muted">Sélection multiple possible. <b>CE JOUR</b> remonte les priorités.</div>
         </div>
 
-        <div class="grid-two">
+        <div class="grid-2">
           <div class="field-group">
-            <label for="viewFilter" class="label-mini">Vue</label>
+            <label class="label-mini" for="viewFilter">Vue</label>
             <select id="viewFilter" class="field select">
               <option value="active">Actives</option>
               <option value="done">Finies</option>
@@ -112,7 +104,7 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="sortFilter" class="label-mini">Tri</label>
+            <label class="label-mini" for="sortFilter">Tri</label>
             <select id="sortFilter" class="field select">
               <option value="roulette">Roulette</option>
               <option value="ordre">Ordre d’import</option>
@@ -122,33 +114,31 @@ Ranger bureau 1"
           </div>
         </div>
 
-        <div id="taskList" class="stack-list"></div>
+        <div id="taskList" class="stack"></div>
       </section>
 
-      <!-- KIFFANCE -->
       <section id="left-kiffance" class="tab-page">
-        <p class="muted helper">
-          Les kiffances restent des surprises. Tu peux enrichir la réserve, mais la liste ne s’exhibe pas comme un menu de fast-food dopaminergique.
+        <p class="helper">
+          Les kiffances restent des surprises. On nourrit la réserve, on ne l’expose pas comme un buffet de dopamine.
         </p>
 
-        <div class="inline-actions">
-          <input id="kiffNew" class="field input grow" type="text" placeholder="Ajouter une nouvelle kiffance…">
-          <button id="kiffAdd" class="action-btn action-btn--strong" type="button">+</button>
+        <div class="row">
+          <input id="kiffNew" class="field input grow" type="text" placeholder="Ajouter une kiffance…">
+          <button id="kiffAdd" class="action-btn action-btn--accent" type="button">+</button>
         </div>
 
-        <div class="inline-actions">
+        <div class="row">
           <button id="kiffSuggest" class="action-btn" type="button">Surprise</button>
           <button id="kiffToTask" class="action-btn" type="button">En tâche</button>
         </div>
 
-        <div id="kiffSuggestionBox" class="surprise-box">Aucune surprise pour le moment.</div>
+        <div id="kiffSuggestionBox" class="surprise-card">Aucune surprise pour le moment.</div>
       </section>
 
-      <!-- PREFS -->
       <section id="left-prefs" class="tab-page">
-        <div class="grid-two">
+        <div class="grid-2">
           <div class="field-group">
-            <label for="modeSel" class="label-mini">Mode</label>
+            <label class="label-mini" for="modeSel">Mode</label>
             <select id="modeSel" class="field select">
               <option value="clair">Clair</option>
               <option value="sombre">Sombre</option>
@@ -156,7 +146,7 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="seasonSel" class="label-mini">Saison</label>
+            <label class="label-mini" for="seasonSel">Saison</label>
             <select id="seasonSel" class="field select">
               <option value="printemps">Printemps</option>
               <option value="ete">Été</option>
@@ -167,7 +157,7 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="fontSel" class="label-mini">Police</label>
+            <label class="label-mini" for="fontSel">Police</label>
             <select id="fontSel" class="field select">
               <option value="yusei">Yusei Magic</option>
               <option value="zen">Zen Maru Gothic</option>
@@ -178,12 +168,12 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="uiScale" class="label-mini">Taille UI</label>
+            <label class="label-mini" for="uiScale">Taille UI</label>
             <input id="uiScale" class="field range" type="range" min="14" max="18" step="1">
           </div>
 
           <div class="field-group">
-            <label for="seriousSel" class="label-mini">Mode sérieux</label>
+            <label class="label-mini" for="seriousSel">Mode sérieux</label>
             <select id="seriousSel" class="field select">
               <option value="off">Off</option>
               <option value="on">On</option>
@@ -191,7 +181,7 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="keepListFocusSel" class="label-mini">Liste en focus</label>
+            <label class="label-mini" for="keepListFocusSel">Liste en focus</label>
             <select id="keepListFocusSel" class="field select">
               <option value="true">Visible</option>
               <option value="false">Masquée</option>
@@ -199,35 +189,34 @@ Ranger bureau 1"
           </div>
 
           <div class="field-group">
-            <label for="fatigueSel" class="label-mini">Fatigue</label>
+            <label class="label-mini" for="fatigueSel">Fatigue</label>
             <input id="fatigueSel" class="field range" type="range" min="0" max="4" step="1">
           </div>
 
           <div class="field-group">
-            <label for="motivationSel" class="label-mini">Motivation</label>
+            <label class="label-mini" for="motivationSel">Motivation</label>
             <input id="motivationSel" class="field range" type="range" min="0" max="4" step="1">
           </div>
 
           <div class="field-group">
-            <label for="workMinSel" class="label-mini">Pomodoro</label>
+            <label class="label-mini" for="workMinSel">Pomodoro</label>
             <input id="workMinSel" class="field input" type="number" min="5" max="90" step="1">
           </div>
 
           <div class="field-group">
-            <label for="breakMinSel" class="label-mini">Pause</label>
+            <label class="label-mini" for="breakMinSel">Pause</label>
             <input id="breakMinSel" class="field input" type="number" min="1" max="30" step="1">
           </div>
         </div>
 
-        <div class="inline-actions">
-          <button id="prefsApply" class="action-btn action-btn--strong" type="button">Appliquer</button>
+        <div class="row">
+          <button id="prefsApply" class="action-btn action-btn--accent" type="button">Appliquer</button>
           <button id="prefsReset" class="action-btn" type="button">Reset prefs</button>
         </div>
       </section>
 
-      <!-- EXPORT -->
       <section id="left-export" class="tab-page">
-        <div class="inline-actions">
+        <div class="row">
           <button id="exportBtn" class="action-btn" type="button">Copier JSON</button>
           <button id="reportBtn" class="action-btn" type="button">Rapport du jour</button>
           <button id="wipeBtn" class="action-btn action-btn--danger" type="button">Reset total</button>
@@ -238,35 +227,20 @@ Ranger bureau 1"
     </div>
   </aside>
 
-  <!-- CENTRE -->
-  <main id="hub" class="hub">
-    <div class="hub__inner">
-      <h1 id="appTitle" class="app-title">ELIMINATOR</h1>
+  <!-- MAIN -->
+  <main class="app-shell">
+    <div class="app-shell__inner">
+      <h1 class="app-title">ELIMINATOR</h1>
       <p id="subtitle" class="subtitle">Une quête après l’autre.</p>
 
-      <section class="progress-zone" aria-label="Progression">
+      <section class="progress-shell">
         <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
           <div id="progressFill" class="progress-fill"></div>
-          <div id="progressPctIn" class="progress-text">100%</div>
+          <div id="progressPctIn" class="progress-pct">100%</div>
         </div>
       </section>
 
-      <section class="main-zone" aria-label="Mission courante">
-        <div class="main-zone__top">
-          <div class="hud-inline">
-            <span id="pillTasks" class="hud-inline__item">0/0 tâches</span>
-            <span id="pillEto" class="hud-inline__item">0/0 étorions</span>
-            <span id="pillDone" class="hud-inline__item">0 faite</span>
-            <span id="pillMode" class="hud-inline__item">mode: normal</span>
-            <span id="pillFlow" class="hud-inline__item">flow: stable</span>
-          </div>
-
-          <div class="pomodoro-capsule">
-            <button id="pomoTime" class="pomo-time" type="button" title="Play / pause pomodoro">25:00</button>
-            <button id="pomoEdit" class="icon-btn ghost-btn" type="button" title="Réglages pomodoro">✎</button>
-          </div>
-        </div>
-
+      <section class="mission-card">
         <div id="statusSpot" class="status-spot" aria-live="polite"></div>
 
         <div id="taskTitle" class="task-title">Aucune tâche sélectionnée</div>
@@ -278,15 +252,15 @@ Ranger bureau 1"
         </div>
 
         <div class="center-actions">
-          <button id="undoBtn" class="side-action" type="button" title="Retour arrière">↶</button>
+          <button id="undoBtn" class="side-btn" type="button" title="Retour arrière">↶</button>
 
           <button id="rouletteBtn" class="roulette-btn" type="button" aria-label="Roulette">
             <div id="rouletteWheel" class="roulette-wheel">
-              <span class="roulette-text">Roulette</span>
+              <span class="roulette-wheel__txt">Roulette</span>
             </div>
           </button>
 
-          <button id="bombBtn" class="side-action side-action--bomb" type="button" title="Dégommer un étorion">💣</button>
+          <button id="bombBtn" class="side-btn side-btn--accent" type="button" title="Dégommer 1 étorion">💣</button>
         </div>
 
         <div class="quick-links">
@@ -300,28 +274,41 @@ Ranger bureau 1"
           <button id="editTaskBtn" class="quick-link" type="button">Éditer</button>
         </div>
 
+        <div class="pomodoro-zone">
+          <button id="pomoTime" class="pomo-pill" type="button" title="Play / pause">25:00</button>
+          <button id="pomoEdit" class="icon-btn" type="button" title="Réglages pomodoro">✎</button>
+        </div>
+
+        <div class="micro-inline">
+          <span id="pillTasks">0/0 tâches</span>
+          <span id="pillEto">0/0 étorions</span>
+          <span id="pillDone">0 faite</span>
+          <span id="pillMode">mode: normal</span>
+          <span id="pillFlow">flow: stable</span>
+        </div>
+
         <section id="belowList" class="below-list" hidden>
           <div class="below-list__head">
             <div class="panel-title">Liste en cours</div>
             <button id="btnHideBelow" class="action-btn" type="button">Masquer</button>
           </div>
-          <div id="belowTasks" class="stack-list"></div>
+          <div id="belowTasks" class="stack"></div>
         </section>
       </section>
     </div>
   </main>
 
   <!-- PANNEAU DROIT -->
-  <aside id="rightPanel" class="side-panel side-panel--right" aria-label="Panneau droit">
-    <div class="side-panel__top">
-      <div class="panel-title">Panneau</div>
-      <div class="side-panel__tools">
-        <input id="rightPanelWidth" class="panel-width-range" type="range" min="320" max="720" step="10" value="430" title="Largeur panneau droit">
-        <button id="rightClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer le panneau droit">×</button>
+  <aside id="rightPanel" class="panel panel--right" hidden aria-label="Panneau droit">
+    <div class="panel__head">
+      <div class="panel__title">Panneau</div>
+      <div class="panel__head-tools">
+        <input id="rightPanelWidth" class="panel-range" type="range" min="320" max="720" step="10" value="430" title="Largeur panneau droit">
+        <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
       </div>
     </div>
 
-    <nav class="panel-tabs" aria-label="Onglets panneau droit">
+    <nav class="tabs">
       <button class="tab-btn is-active" data-righttab="sets" type="button">Sets</button>
       <button class="tab-btn" data-righttab="habits" type="button">Habitudes</button>
       <button class="tab-btn" data-righttab="flow" type="button">Flow</button>
@@ -330,124 +317,115 @@ Ranger bureau 1"
       <button class="tab-btn" data-righttab="stats" type="button">Stats</button>
     </nav>
 
-    <div class="side-panel__body">
-      <!-- SETS -->
+    <div class="panel__body">
       <section id="right-sets" class="tab-page is-show">
-        <div class="grid-two">
+        <div class="grid-2">
           <div class="field-group">
-            <label for="hospPatients" class="label-mini">Hospitalier</label>
+            <label class="label-mini" for="hospPatients">Hospitalier</label>
             <input id="hospPatients" class="field input" type="number" min="1" max="20">
           </div>
-          <div class="inline-end">
+          <div class="field-group field-group--bottom">
             <button id="hospResetToday" class="action-btn" type="button">Reset</button>
           </div>
 
           <div class="field-group">
-            <label for="consPatients" class="label-mini">Consultation</label>
+            <label class="label-mini" for="consPatients">Consultation</label>
             <input id="consPatients" class="field input" type="number" min="1" max="30">
           </div>
-          <div class="inline-end">
+          <div class="field-group field-group--bottom">
             <button id="consResetToday" class="action-btn" type="button">Reset</button>
           </div>
         </div>
 
-        <div id="setsContent" class="stack-list"></div>
+        <div id="setsContent" class="stack"></div>
       </section>
 
-      <!-- HABITS -->
       <section id="right-habits" class="tab-page">
-        <div class="inline-actions">
+        <div class="row">
           <input id="habitName" class="field input grow" type="text" placeholder="Nom de l’habitude">
           <input id="habitSlots" class="field input field-small" type="number" min="3" max="12" value="8">
-          <button id="habitAddBtn" class="action-btn action-btn--strong" type="button">Ajouter</button>
+          <button id="habitAddBtn" class="action-btn action-btn--accent" type="button">Ajouter</button>
         </div>
 
-        <div id="habitsContent" class="stack-list"></div>
+        <div id="habitsContent" class="stack"></div>
       </section>
 
-      <!-- FLOW -->
       <section id="right-flow" class="tab-page">
-        <div class="grid-two">
+        <div class="grid-2">
           <div class="field-group">
-            <label for="fatigueInline" class="label-mini">Fatigue</label>
+            <label class="label-mini" for="fatigueInline">Fatigue</label>
             <input id="fatigueInline" class="field range" type="range" min="0" max="4" step="1">
           </div>
 
           <div class="field-group">
-            <label for="motivationInline" class="label-mini">Motivation</label>
+            <label class="label-mini" for="motivationInline">Motivation</label>
             <input id="motivationInline" class="field range" type="range" min="0" max="4" step="1">
           </div>
 
           <div class="field-group">
-            <label for="celeChanceInline" class="label-mini">Célébrations</label>
+            <label class="label-mini" for="celeChanceInline">Célébrations</label>
             <input id="celeChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
           </div>
 
           <div class="field-group">
-            <label for="tipsChanceInline" class="label-mini">Conseils</label>
+            <label class="label-mini" for="tipsChanceInline">Conseils</label>
             <input id="tipsChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
           </div>
         </div>
 
-        <div class="inline-actions">
-          <button id="saveFlowBtn" class="action-btn action-btn--strong" type="button">Sauver</button>
+        <div class="row">
+          <button id="saveFlowBtn" class="action-btn action-btn--accent" type="button">Sauver</button>
           <button id="testTipBtn" class="action-btn" type="button">Test conseil</button>
           <button id="testCeleBtn" class="action-btn" type="button">Test célébration</button>
         </div>
       </section>
 
-      <!-- HISTORY -->
       <section id="right-history" class="tab-page">
-        <div id="historyContent" class="stack-list"></div>
+        <div id="historyContent" class="stack"></div>
         <div class="soft-sep"></div>
         <div id="calendarGrid" class="calendar-grid"></div>
       </section>
 
-      <!-- NOTES -->
       <section id="right-notes" class="tab-page">
         <div class="field-group">
-          <label for="notesAreaPanel" class="label-mini">Notes</label>
-          <textarea id="notesAreaPanel" class="field textarea" rows="7" placeholder="Bloc-notes principal"></textarea>
+          <label class="label-mini" for="notesAreaPanel">Notes</label>
+          <textarea id="notesAreaPanel" class="field textarea" rows="7"></textarea>
         </div>
 
         <div class="field-group">
-          <label for="remindersAreaPanel" class="label-mini">Rappels</label>
-          <textarea id="remindersAreaPanel" class="field textarea" rows="6" placeholder="Rappels / aide-mémoire"></textarea>
+          <label class="label-mini" for="remindersAreaPanel">Rappels</label>
+          <textarea id="remindersAreaPanel" class="field textarea" rows="6"></textarea>
         </div>
       </section>
 
-      <!-- STATS -->
       <section id="right-stats" class="tab-page">
-        <div id="statsContentPanel" class="stack-list"></div>
+        <div id="statsContentPanel" class="stack"></div>
       </section>
     </div>
   </aside>
 
-  <!-- MODAL BACK -->
-  <div id="modalBack" class="modal-backdrop" hidden></div>
-
   <!-- MODAL POMODORO -->
-  <div id="pomoModal" class="glass-modal-wrap" hidden role="dialog" aria-modal="true" aria-label="Réglages pomodoro">
+  <div id="pomoModal" class="glass-wrap" hidden role="dialog" aria-modal="true" aria-label="Pomodoro">
     <div class="glass-modal glass-modal--small">
       <div class="glass-modal__head">
         <div class="panel-title">Pomodoro</div>
-        <button id="modalClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer">×</button>
+        <button id="modalClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
       </div>
 
       <div class="glass-modal__body">
-        <div class="grid-two">
+        <div class="grid-2">
           <div class="field-group">
-            <label for="pomoMinutes" class="label-mini">Pomodoro</label>
-            <input id="pomoMinutes" class="field input" type="number" min="5" max="90" step="1">
+            <label class="label-mini" for="pomoMinutes">Pomodoro</label>
+            <input id="pomoMinutes" class="field input" type="number" min="5" max="90">
           </div>
 
           <div class="field-group">
-            <label for="breakMinutes" class="label-mini">Pause</label>
-            <input id="breakMinutes" class="field input" type="number" min="1" max="30" step="1">
+            <label class="label-mini" for="breakMinutes">Pause</label>
+            <input id="breakMinutes" class="field input" type="number" min="1" max="30">
           </div>
 
-          <div class="field-group full-span">
-            <label for="autoStartSel" class="label-mini">Auto-start</label>
+          <div class="field-group full">
+            <label class="label-mini" for="autoStartSel">Auto-start</label>
             <select id="autoStartSel" class="field select">
               <option value="auto">Automatique</option>
               <option value="manual">Manuel</option>
@@ -455,65 +433,61 @@ Ranger bureau 1"
           </div>
         </div>
 
-        <div class="inline-actions">
-          <button id="pomoApply" class="action-btn action-btn--strong" type="button">Appliquer</button>
+        <div class="row">
+          <button id="pomoApply" class="action-btn action-btn--accent" type="button">Appliquer</button>
           <button id="pomoReset" class="action-btn" type="button">Reset timer</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- OVERLAY CENTRAL -->
-  <div id="overlayModal" class="glass-modal-wrap" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
+  <!-- OVERLAY -->
+  <div id="overlayModal" class="glass-wrap" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
     <div class="glass-modal glass-modal--large">
       <div class="glass-modal__head">
         <div id="overlayTitle" class="panel-title">Fenêtre</div>
-        <button id="overlayClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer">×</button>
+        <button id="overlayClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
       </div>
 
       <div class="glass-modal__body glass-modal__body--scroll">
-        <!-- NOTES -->
         <section id="overlay-notes" class="overlay-page" hidden>
           <div class="field-group">
-            <label for="notesArea" class="label-mini">Notes</label>
-            <textarea id="notesArea" class="field textarea" rows="10" placeholder="Écris ici."></textarea>
+            <label class="label-mini" for="notesArea">Notes</label>
+            <textarea id="notesArea" class="field textarea" rows="10"></textarea>
           </div>
 
           <div class="field-group">
-            <label for="remindersArea" class="label-mini">Rappels</label>
-            <textarea id="remindersArea" class="field textarea" rows="7" placeholder="• Demain : …"></textarea>
+            <label class="label-mini" for="remindersArea">Rappels</label>
+            <textarea id="remindersArea" class="field textarea" rows="7"></textarea>
           </div>
 
           <div class="soft-sep"></div>
           <div class="panel-title">Historique rapide</div>
-          <div id="notesEntriesList" class="stack-list"></div>
+          <div id="notesEntriesList" class="stack"></div>
         </section>
 
-        <!-- TYPHONSE -->
         <section id="overlay-typhonse" class="overlay-page" hidden>
-          <div class="inline-actions">
+          <div class="row">
             <input id="typhonseInput" class="field input grow" type="text" placeholder="Ajouter un item Typhonse">
-            <button id="btnAddTyphonse" class="action-btn action-btn--strong" type="button">Ajouter</button>
+            <button id="btnAddTyphonse" class="action-btn action-btn--accent" type="button">Ajouter</button>
           </div>
 
-          <div id="typhonseList" class="stack-list"></div>
+          <div id="typhonseList" class="stack"></div>
         </section>
 
-        <!-- KIFFANCE -->
         <section id="overlay-kiffance" class="overlay-page" hidden>
-          <p class="muted helper">Ici aussi, les surprises restent des surprises. On ne transforme pas le mystère en inventaire Excel.</p>
+          <p class="helper">Les surprises restent des surprises. Pas de catalogue ici, espèce de petit gobelin de contrôle.</p>
 
-          <div id="overlayKiffSuggestion" class="surprise-box">Aucune surprise.</div>
+          <div id="overlayKiffSuggestion" class="surprise-card">Aucune surprise.</div>
 
-          <div class="inline-actions">
+          <div class="row">
             <button id="overlayKiffRefresh" class="action-btn" type="button">Nouvelle surprise</button>
-            <button id="overlayKiffToTask" class="action-btn action-btn--strong" type="button">Ajouter en tâche</button>
+            <button id="overlayKiffToTask" class="action-btn action-btn--accent" type="button">Ajouter en tâche</button>
           </div>
         </section>
 
-        <!-- STATS -->
         <section id="overlay-stats" class="overlay-page" hidden>
-          <div id="statsContent" class="stack-list"></div>
+          <div id="statsContent" class="stack"></div>
         </section>
       </div>
     </div>
