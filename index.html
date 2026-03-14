@@ -22,11 +22,11 @@
 
     <div class="topbar__center">
       <div class="top-actions">
-        <button id="modeToggle" class="top-btn" type="button">Clair</button>
+        <button id="modeToggle" class="top-btn" type="button" aria-pressed="false">Clair</button>
         <button id="seasonCycle" class="top-btn" type="button">Automne</button>
-        <button id="seriousToggle" class="top-btn" type="button">Sérieux</button>
-        <button id="focusBtn" class="top-btn" type="button">Focus</button>
-        <button id="listToggleBtn" class="top-btn" type="button">Liste</button>
+        <button id="seriousToggle" class="top-btn" type="button" aria-pressed="false">Sérieux</button>
+        <button id="focusBtn" class="top-btn" type="button" aria-pressed="false">Focus</button>
+        <button id="listToggleBtn" class="top-btn" type="button" aria-pressed="false">Liste</button>
         <button id="setsToggleBtn" class="top-btn" type="button">Sets</button>
       </div>
     </div>
@@ -44,12 +44,21 @@
     <div class="panel__head">
       <div class="panel__title">Menu</div>
       <div class="panel__head-tools">
-        <input id="leftPanelWidth" class="panel-range" type="range" min="300" max="620" step="10" value="380" title="Largeur panneau gauche">
-        <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
+        <input
+          id="leftPanelWidth"
+          class="panel-range"
+          type="range"
+          min="300"
+          max="620"
+          step="10"
+          value="380"
+          title="Largeur panneau gauche"
+        >
+        <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer panneau gauche">×</button>
       </div>
     </div>
 
-    <nav class="tabs">
+    <nav class="tabs" aria-label="Onglets panneau gauche">
       <button class="tab-btn is-active" data-lefttab="inbox" type="button">Inbox</button>
       <button class="tab-btn" data-lefttab="tasks" type="button">Tâches</button>
       <button class="tab-btn" data-lefttab="kiffance" type="button">Kiffance</button>
@@ -66,13 +75,18 @@
           <br><span class="mono">Rapport patient 3</span>
         </p>
 
-        <textarea id="inboxText" class="field textarea" rows="12" placeholder="ADMIN
+        <textarea
+          id="inboxText"
+          class="field textarea"
+          rows="12"
+          placeholder="ADMIN
 Répondre à Anna - 2
 Rapport patient 3
 
 PERSO
 Batterie 2
-Ranger bureau 1"></textarea>
+Ranger bureau 1"
+        ></textarea>
 
         <div class="row">
           <button id="inboxAdd" class="action-btn action-btn--accent" type="button">Ajouter</button>
@@ -234,7 +248,14 @@ Ranger bureau 1"></textarea>
       <p id="subtitle" class="subtitle">Une quête après l’autre.</p>
 
       <section class="progress-shell">
-        <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+        <div
+          id="progressBar"
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="100"
+        >
           <div id="progressFill" class="progress-fill"></div>
           <div id="progressPctIn" class="progress-pct">100%</div>
         </div>
@@ -303,12 +324,21 @@ Ranger bureau 1"></textarea>
     <div class="panel__head">
       <div class="panel__title">Panneau</div>
       <div class="panel__head-tools">
-        <input id="rightPanelWidth" class="panel-range" type="range" min="320" max="720" step="10" value="430" title="Largeur panneau droit">
-        <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
+        <input
+          id="rightPanelWidth"
+          class="panel-range"
+          type="range"
+          min="320"
+          max="720"
+          step="10"
+          value="430"
+          title="Largeur panneau droit"
+        >
+        <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer panneau droit">×</button>
       </div>
     </div>
 
-    <nav class="tabs">
+    <nav class="tabs" aria-label="Onglets panneau droit">
       <button class="tab-btn is-active" data-righttab="sets" type="button">Sets</button>
       <button class="tab-btn" data-righttab="habits" type="button">Habitudes</button>
       <button class="tab-btn" data-righttab="flow" type="button">Flow</button>
@@ -441,7 +471,7 @@ Ranger bureau 1"></textarea>
     </div>
   </div>
 
-  <!-- OVERLAY -->
+  <!-- OVERLAY CENTRAL -->
   <div id="overlayModal" class="glass-wrap" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
     <div class="glass-modal glass-modal--large">
       <div class="glass-modal__head">
@@ -476,7 +506,7 @@ Ranger bureau 1"></textarea>
         </section>
 
         <section id="overlay-kiffance" class="overlay-page" hidden>
-          <p class="helper">Les surprises restent des surprises. Pas de catalogue ici, espèce de petit gobelin de contrôle.</p>
+          <p class="helper">Les surprises restent des surprises. Pas de catalogue ici, petit gobelin du contrôle.</p>
 
           <div id="overlayKiffSuggestion" class="surprise-card">Aucune surprise.</div>
 
