@@ -126,7 +126,7 @@ const defaultState = {
     season: "automne",
     serious: false,
     focus: false,
-    font: "inter",
+    font: "yusei",
     baseSize: 16,
     showBelowList: false
   },
