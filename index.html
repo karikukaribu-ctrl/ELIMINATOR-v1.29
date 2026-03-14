@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ELIMINATOR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header id="topBar" class="topbar">
+    <div class="topbar__left">
+      <button id="btnLeft" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir le panneau gauche">≡</button>
+    </div>
+
+    <div class="topbar__center">
+      <nav class="topbar__nav" aria-label="Contrôles principaux">
+        <button id="modeToggle" class="chip-btn" type="button" aria-pressed="false">Clair</button>
+        <button id="seasonCycle" class="chip-btn" type="button">Automne</button>
+        <button id="seriousToggle" class="chip-btn chip-btn--quiet" type="button" aria-pressed="false">Sérieux</button>
+        <button id="focusBtn" class="chip-btn chip-btn--quiet" type="button" aria-pressed="false">Focus</button>
+        <button id="listToggleBtn" class="chip-btn chip-btn--quiet" type="button" aria-pressed="false">Liste</button>
+        <button id="setsToggleBtn" class="chip-btn chip-btn--quiet" type="button" aria-pressed="false">Sets</button>
+      </nav>
+    </div>
+
+    <div class="topbar__right">
+      <button id="btnRight" class="icon-btn topbar-btn" type="button" aria-label="Ouvrir le panneau droit">▦</button>
+    </div>
+  </header>
+
+  <div id="panelBack" class="panel-back" aria-hidden="true"></div>
+
+  <!-- PANNEAU GAUCHE -->
+  <aside id="leftPanel" class="panel panel--left" aria-label="Panneau gauche">
+    <div class="panel__top">
+      <div class="panel__title">Menu</div>
+      <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer le panneau gauche">×</button>
+    </div>
+
+    <nav class="panel__tabs" aria-label="Onglets panneau gauche">
+      <button class="tab-btn is-active" data-lefttab="inbox" type="button">Inbox</button>
+      <button class="tab-btn" data-lefttab="tasks" type="button">Tâches</button>
+      <button class="tab-btn" data-lefttab="kiffance" type="button">Kiffance</button>
+      <button class="tab-btn" data-lefttab="prefs" type="button">Préférences</button>
+      <button class="tab-btn" data-lefttab="export" type="button">Export</button>
+    </nav>
+
+    <div class="panel__content">
+      <!-- INBOX -->
+      <section id="left-inbox" class="tab-page is-show">
+        <p class="muted small">
+          Une ligne = une tâche. Une ligne en MAJUSCULES = une catégorie.
+          Exemple :
+          <br>
+          <span class="mono">ADMIN</span>
+          <br>
+          <span class="mono">Répondre à Anna - 2</span>
+          <br>
+          <span class="mono">Rapport mutuelle 3</span>
+        </p>
+
+        <textarea
+          id="inboxText"
+          class="field textarea"
+          rows="11"
+          placeholder="ADMIN
+Répondre à Anna - 2
+Rapport patient 3
+
+PERSO
+Batterie - 2
+Ranger bureau 1"
+        ></textarea>
+
+        <div class="row">
+          <button id="inboxAdd" class="btn btn--primary" type="button">Ajouter</button>
+          <button id="inboxClear" class="btn btn--ghost" type="button">Effacer</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row row--wrap">
+          <div class="mini-pill">Actives : <b id="statActive">0</b></div>
+          <div class="mini-pill">Finies : <b id="statDone">0</b></div>
+          <div class="mini-pill">Étorions : <b id="statEtorions">0</b></div>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="left-tasks" class="tab-page">
+        <div class="row row--wrap">
+          <div class="grow">
+            <label for="catFilter" class="muted small">Catégorie</label>
+            <select id="catFilter" class="field select"></select>
+          </div>
+
+          <div class="grow">
+            <label for="viewFilter" class="muted small">Vue</label>
+            <select id="viewFilter" class="field select">
+              <option value="active">Actives</option>
+              <option value="done">Finies</option>
+              <option value="all">Toutes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row row--wrap">
+          <div class="grow">
+            <label for="sortFilter" class="muted small">Tri</label>
+            <select id="sortFilter" class="field select">
+              <option value="roulette">Roulette</option>
+              <option value="ordre">Ordre d’import</option>
+              <option value="alpha">Alphabétique</option>
+              <option value="cat">Par catégorie</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="taskList" class="stack"></div>
+      </section>
+
+      <!-- KIFFANCE -->
+      <section id="left-kiffance" class="tab-page">
+        <p class="muted small">Petites pauses utiles. Pas des trous noirs numériques.</p>
+
+        <div class="row row--wrap">
+          <input id="kiffNew" class="field input" type="text" placeholder="Ajouter une kiffance…">
+          <button id="kiffAdd" class="btn btn--primary" type="button">+</button>
+        </div>
+
+        <div class="row row--wrap">
+          <button id="kiffSuggest" class="btn btn--ghost" type="button">Suggérer</button>
+          <button id="kiffToTask" class="btn btn--ghost" type="button">Ajouter en tâche</button>
+        </div>
+
+        <div id="kiffSuggestionBox" class="soft-card muted">Aucune suggestion.</div>
+
+        <div id="kiffList" class="stack"></div>
+      </section>
+
+      <!-- PREFS -->
+      <section id="left-prefs" class="tab-page">
+        <div class="grid2">
+          <div>
+            <label for="modeSel" class="muted small">Mode</label>
+            <select id="modeSel" class="field select">
+              <option value="clair">Clair</option>
+              <option value="sombre">Sombre</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="seasonSel" class="muted small">Saison</label>
+            <select id="seasonSel" class="field select">
+              <option value="printemps">Printemps</option>
+              <option value="ete">Été</option>
+              <option value="automne">Automne</option>
+              <option value="hiver">Hiver</option>
+              <option value="noirblanc">Noir & blanc</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="fontSel" class="muted small">Police</label>
+            <select id="fontSel" class="field select">
+              <option value="inter">Inter</option>
+              <option value="zen">Zen Maru Gothic</option>
+              <option value="baloo">Baloo 2</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="uiScale" class="muted small">Taille UI</label>
+            <input id="uiScale" class="field range" type="range" min="14" max="18" step="1">
+          </div>
+
+          <div>
+            <label for="seriousSel" class="muted small">Mode sérieux</label>
+            <select id="seriousSel" class="field select">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="keepListFocusSel" class="muted small">Liste visible en focus</label>
+            <select id="keepListFocusSel" class="field select">
+              <option value="true">Oui</option>
+              <option value="false">Non</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="fatigueSel" class="muted small">Fatigue</label>
+            <input id="fatigueSel" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div>
+            <label for="motivationSel" class="muted small">Motivation</label>
+            <input id="motivationSel" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div>
+            <label for="workMinSel" class="muted small">Pomodoro (min)</label>
+            <input id="workMinSel" class="field input" type="number" min="5" max="90" step="1">
+          </div>
+
+          <div>
+            <label for="breakMinSel" class="muted small">Pause (min)</label>
+            <input id="breakMinSel" class="field input" type="number" min="1" max="30" step="1">
+          </div>
+        </div>
+
+        <div class="row row--wrap">
+          <button id="prefsApply" class="btn btn--primary" type="button">Appliquer</button>
+          <button id="prefsReset" class="btn btn--ghost" type="button">Reset prefs</button>
+        </div>
+      </section>
+
+      <!-- EXPORT -->
+      <section id="left-export" class="tab-page">
+        <p class="muted small">Export JSON complet + rapport du jour.</p>
+
+        <div class="row row--wrap">
+          <button id="exportBtn" class="btn btn--ghost" type="button">Copier JSON</button>
+          <button id="reportBtn" class="btn btn--ghost" type="button">Copier rapport du jour</button>
+          <button id="wipeBtn" class="btn btn--danger" type="button">Reset total</button>
+        </div>
+
+        <textarea id="exportOut" class="field textarea" rows="12" readonly></textarea>
+      </section>
+    </div>
+  </aside>
+
+  <!-- CONTENU CENTRAL -->
+  <main id="hub" class="hub">
+    <div class="hub__inner">
+      <h1 id="appTitle" class="app-title">ELIMINATOR</h1>
+      <p id="subtitle" class="subtitle">Une quête après l’autre.</p>
+
+      <section id="progressWrap" class="progress-wrap" aria-label="Progression">
+        <div id="progressBar" class="progress-shell" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div id="progressFill" class="progress-fill"></div>
+          <div id="progressPctIn" class="progress-label">100%</div>
+        </div>
+      </section>
+
+      <section id="missionCard" class="mission-card" aria-label="Mission">
+        <div class="mission-card__top">
+          <div class="mission-card__left">
+            <div id="missionLineLeft" class="eyebrow">Tâches en cours (0 finies · 0/0)</div>
+
+            <div class="hud-pills">
+              <span id="pillTasks" class="hud-pill">0/0 tâches</span>
+              <span id="pillEto" class="hud-pill">0/0 étorions</span>
+              <span id="pillDone" class="hud-pill">0 faite</span>
+              <span id="pillMode" class="hud-pill">mode: normal</span>
+              <span id="pillFlow" class="hud-pill">flow: stable</span>
+            </div>
+          </div>
+
+          <div class="mission-card__right">
+            <div class="pomodoro-inline">
+              <span id="pomoTime" class="timer-pill" title="Cliquer = play/pause">25:00</span>
+              <button id="pomoEdit" class="icon-btn" type="button" title="Paramètres pomodoro">✎</button>
+            </div>
+            <div id="statusSpot" class="status-spot" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div id="taskTitle" class="task-title">Aucune tâche sélectionnée</div>
+
+        <div id="taskMetaDetails" class="task-meta muted" hidden>
+          Catégorie : <span id="metaCat">—</span>
+          · Étorions : <span id="metaEt">—</span>
+          · Temps courant : <span id="metaTimer">00:00</span>
+        </div>
+
+        <div class="action-row">
+          <button id="undoBtn" class="action-pill" type="button" title="Retour arrière">
+            ↶ <span>Retour</span>
+          </button>
+
+          <button id="rouletteBtn" class="roulette-btn" type="button" aria-label="Roulette">
+            <div id="rouletteWheel" class="roulette-wheel">
+              <div class="roulette-wheel__text">Roulette</div>
+            </div>
+          </button>
+
+          <button id="bombBtn" class="action-pill action-pill--bomb" type="button" title="Dégommer 1 étorion">
+            💣 <span>Dégommer</span>
+          </button>
+        </div>
+
+        <div class="quick-links" role="navigation" aria-label="Accès rapides">
+          <button id="openNotes" class="link-chip" type="button">Notes</button>
+          <button id="openTyphonse" class="link-chip" type="button">Typhonse</button>
+          <button id="openKiffance" class="link-chip" type="button">Kiffance</button>
+          <button id="openStats" class="link-chip" type="button">Stats</button>
+          <button id="taskInfoBtn" class="link-chip" type="button">Détails</button>
+          <button id="belowListToggleBtn" class="link-chip" type="button">Liste en cours</button>
+          <button id="doneTaskBtn" class="link-chip" type="button">Terminer</button>
+          <button id="editTaskBtn" class="link-chip" type="button">Éditer</button>
+        </div>
+
+        <section id="belowList" class="below-list" hidden>
+          <div class="below-list__head">
+            <div class="eyebrow">Liste en cours</div>
+            <button id="btnHideBelow" class="btn btn--ghost btn--small" type="button">Masquer</button>
+          </div>
+          <div id="belowTasks" class="stack"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <!-- PANNEAU DROIT -->
+  <aside id="rightPanel" class="panel panel--right" aria-label="Panneau droit">
+    <div class="panel__top">
+      <div class="panel__title">Panneau</div>
+      <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer le panneau droit">×</button>
+    </div>
+
+    <nav class="panel__tabs" aria-label="Onglets panneau droit">
+      <button class="tab-btn is-active" data-righttab="sets" type="button">Sets</button>
+      <button class="tab-btn" data-righttab="habits" type="button">Habitudes</button>
+      <button class="tab-btn" data-righttab="flow" type="button">Flow</button>
+      <button class="tab-btn" data-righttab="history" type="button">Hist</button>
+      <button class="tab-btn" data-righttab="notes" type="button">Notes</button>
+      <button class="tab-btn" data-righttab="stats" type="button">Stats</button>
+    </nav>
+
+    <div class="panel__content">
+      <!-- SETS -->
+      <section id="right-sets" class="tab-page is-show">
+        <div class="row row--wrap">
+          <div class="grow">
+            <label for="hospPatients" class="muted small">Hospitalier</label>
+            <input id="hospPatients" class="field input" type="number" min="1" max="20">
+          </div>
+          <button id="hospResetToday" class="btn btn--ghost" type="button">Reset</button>
+        </div>
+
+        <div class="row row--wrap">
+          <div class="grow">
+            <label for="consPatients" class="muted small">Consultation</label>
+            <input id="consPatients" class="field input" type="number" min="1" max="30">
+          </div>
+          <button id="consResetToday" class="btn btn--ghost" type="button">Reset</button>
+        </div>
+
+        <div id="setsContent" class="stack"></div>
+      </section>
+
+      <!-- HABITS -->
+      <section id="right-habits" class="tab-page">
+        <div class="row row--wrap">
+          <input id="habitName" class="field input" type="text" placeholder="Nom de l’habitude">
+          <input id="habitSlots" class="field input field--small" type="number" min="3" max="12" value="8">
+          <button id="habitAddBtn" class="btn btn--primary" type="button">Ajouter</button>
+        </div>
+        <div id="habitsContent" class="stack"></div>
+      </section>
+
+      <!-- FLOW -->
+      <section id="right-flow" class="tab-page">
+        <div class="soft-card">
+          <div class="row row--wrap">
+            <div class="grow">
+              <label for="fatigueInline" class="muted small">Fatigue</label>
+              <input id="fatigueInline" class="field range" type="range" min="0" max="4" step="1">
+            </div>
+            <div class="grow">
+              <label for="motivationInline" class="muted small">Motivation</label>
+              <input id="motivationInline" class="field range" type="range" min="0" max="4" step="1">
+            </div>
+          </div>
+
+          <div class="row row--wrap">
+            <div class="grow">
+              <label for="celeChanceInline" class="muted small">Célébrations</label>
+              <input id="celeChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
+            </div>
+            <div class="grow">
+              <label for="tipsChanceInline" class="muted small">Conseils</label>
+              <input id="tipsChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
+            </div>
+          </div>
+
+          <div class="row row--wrap">
+            <button id="saveFlowBtn" class="btn btn--primary" type="button">Sauver</button>
+            <button id="testTipBtn" class="btn btn--ghost" type="button">Test conseil</button>
+            <button id="testCeleBtn" class="btn btn--ghost" type="button">Test célébration</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="right-history" class="tab-page">
+        <div id="historyContent" class="stack"></div>
+        <div class="divider"></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
+      <!-- NOTES -->
+      <section id="right-notes" class="tab-page">
+        <div class="soft-card">
+          <label for="notesAreaPanel" class="muted small">Notes</label>
+          <textarea id="notesAreaPanel" class="field textarea" rows="6" placeholder="Bloc-notes principal"></textarea>
+        </div>
+
+        <div class="soft-card">
+          <label for="remindersAreaPanel" class="muted small">Rappels</label>
+          <textarea id="remindersAreaPanel" class="field textarea" rows="5" placeholder="Rappels / aide-mémoire"></textarea>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section id="right-stats" class="tab-page">
+        <div id="statsContentPanel" class="stack"></div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- BACKDROP MODAL -->
+  <div id="modalBack" class="modal-backdrop" hidden></div>
+
+  <!-- MODAL POMODORO -->
+  <div id="pomoModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Paramètres pomodoro">
+    <div class="modal-card">
+      <div class="modal-card__head">
+        <div class="eyebrow">Paramètres Pomodoro</div>
+        <button id="modalClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="modal-card__body">
+        <div class="grid2">
+          <div>
+            <label for="pomoMinutes" class="muted small">Pomodoro (min)</label>
+            <input id="pomoMinutes" class="field input" type="number" min="5" max="90" step="1">
+          </div>
+
+          <div>
+            <label for="breakMinutes" class="muted small">Pause (min)</label>
+            <input id="breakMinutes" class="field input" type="number" min="1" max="30" step="1">
+          </div>
+
+          <div class="span-2">
+            <label for="autoStartSel" class="muted small">Auto-start</label>
+            <select id="autoStartSel" class="field select">
+              <option value="auto">Automatique</option>
+              <option value="manual">Manuel</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row row--wrap">
+          <button id="pomoApply" class="btn btn--primary" type="button">Appliquer</button>
+          <button id="pomoReset" class="btn btn--ghost" type="button">Reset timer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY CENTRAL -->
+  <div id="overlayModal" class="modal modal--large" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
+    <div class="modal-card modal-card--large">
+      <div class="modal-card__head">
+        <div id="overlayTitle" class="eyebrow">Fenêtre</div>
+        <button id="overlayClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="modal-card__body modal-card__body--scroll">
+        <!-- NOTES -->
+        <section id="overlay-notes" class="overlay-page" hidden>
+          <label for="notesArea" class="muted small">Notes (auto-sauvegarde)</label>
+          <textarea id="notesArea" class="field textarea" rows="10" placeholder="Écris ici."></textarea>
+
+          <div class="divider"></div>
+
+          <label for="remindersArea" class="muted small">Rappels / aide-mémoire</label>
+          <textarea id="remindersArea" class="field textarea" rows="6" placeholder="• Demain : …"></textarea>
+
+          <div class="divider"></div>
+
+          <div class="eyebrow">Historique rapide</div>
+          <div id="notesEntriesList" class="stack"></div>
+        </section>
+
+        <!-- TYPHONSE -->
+        <section id="overlay-typhonse" class="overlay-page" hidden>
+          <p class="muted small">Petites choses à capturer, garder, cocher.</p>
+
+          <div class="row row--wrap">
+            <input id="typhonseInput" class="field input" type="text" placeholder="Ajouter un item Typhonse">
+            <button id="btnAddTyphonse" class="btn btn--primary" type="button">Ajouter</button>
+          </div>
+
+          <div id="typhonseList" class="stack"></div>
+        </section>
+
+        <!-- KIFFANCE -->
+        <section id="overlay-kiffance" class="overlay-page" hidden>
+          <p class="muted small">Une pause intelligente plutôt qu’un effondrement de la volonté.</p>
+
+          <div id="overlayKiffSuggestion" class="soft-card">Aucune suggestion.</div>
+
+          <div class="row row--wrap">
+            <button id="overlayKiffRefresh" class="btn btn--ghost" type="button">Nouvelle suggestion</button>
+            <button id="overlayKiffToTask" class="btn btn--primary" type="button">Ajouter en tâche</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div id="overlayKiffList" class="stack"></div>
+        </section>
+
+        <!-- STATS -->
+        <section id="overlay-stats" class="overlay-page" hidden>
+          <div id="statsContent" class="stack"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="state.js"></script>
+</body>
+</html>
