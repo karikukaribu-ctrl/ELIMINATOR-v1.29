@@ -1,866 +1,524 @@
-[hidden]{
-  display:none !important;
-}
-
-:root{
-  --bg:#e8dccd;
-  --bg2:#caa27a;
-  --fg:#1b1714;
-  --muted:#6d5f53;
-  --line:rgba(255,255,255,.14);
-
-  --glass:rgba(255,255,255,.10);
-  --glass-strong:rgba(255,255,255,.14);
-  --glass-soft:rgba(255,255,255,.08);
-  --shadow:0 18px 44px rgba(0,0,0,.18);
-
-  --accent:#d97a3a;
-  --accent-soft:rgba(217,122,58,.22);
-  --accent-ghost:rgba(217,122,58,.10);
-
-  --danger:#b84a4a;
-
-  --radius-xl:24px;
-  --radius-lg:18px;
-  --radius-md:14px;
-  --radius-sm:10px;
-
-  --baseSize:16px;
-
-  --font-main:"Yusei Magic", "Inter", system-ui, sans-serif;
-  --font-yusei:"Yusei Magic", system-ui, sans-serif;
-  --font-zen:"Zen Maru Gothic", system-ui, sans-serif;
-  --font-mplus:"M PLUS Rounded 1c", system-ui, sans-serif;
-  --font-kosugi:"Kosugi Maru", system-ui, sans-serif;
-  --font-inter:"Inter", system-ui, sans-serif;
-
-  --panel-left:380px;
-  --panel-right:430px;
-
-  --roulette-size:170px;
-}
-
-html, body{
-  height:100%;
-}
-
-html{
-  font-size:var(--baseSize);
-}
-
-body{
-  margin:0;
-  color:var(--fg);
-  font-family:var(--font-main);
-  background:
-    radial-gradient(circle at 12% 16%, rgba(255,255,255,.22), transparent 28%),
-    radial-gradient(circle at 84% 18%, rgba(255,255,255,.10), transparent 22%),
-    linear-gradient(180deg, var(--bg), var(--bg2));
-  overflow-x:hidden;
-}
-
-body[data-font="yusei"]{ font-family:var(--font-yusei); }
-body[data-font="zen"]{ font-family:var(--font-zen); }
-body[data-font="mplus"]{ font-family:var(--font-mplus); }
-body[data-font="kosugi"]{ font-family:var(--font-kosugi); }
-body[data-font="inter"]{ font-family:var(--font-inter); }
-
-body.theme--printemps{
-  --bg:#dbe9cf;
-  --bg2:#9fbb8f;
-  --fg:#162014;
-  --muted:#4b5e48;
-  --accent:#4b9b63;
-  --accent-soft:rgba(75,155,99,.22);
-  --accent-ghost:rgba(75,155,99,.10);
-}
-
-body.theme--ete{
-  --bg:#efe0aa;
-  --bg2:#d1a54b;
-  --fg:#22180f;
-  --muted:#6b5a41;
-  --accent:#df8b2f;
-  --accent-soft:rgba(223,139,47,.22);
-  --accent-ghost:rgba(223,139,47,.10);
-}
-
-body.theme--automne{
-  --bg:#ead8c3;
-  --bg2:#bf8558;
-  --fg:#1d1612;
-  --muted:#6f5a4b;
-  --accent:#d97a3a;
-  --accent-soft:rgba(217,122,58,.22);
-  --accent-ghost:rgba(217,122,58,.10);
-}
-
-body.theme--hiver{
-  --bg:#d9e5ef;
-  --bg2:#7f9db5;
-  --fg:#10171d;
-  --muted:#566672;
-  --accent:#6d9dcc;
-  --accent-soft:rgba(109,157,204,.22);
-  --accent-ghost:rgba(109,157,204,.10);
-}
-
-body.theme--noirblanc{
-  --bg:#e8e6e0;
-  --bg2:#aaa59d;
-  --fg:#101010;
-  --muted:#5f5b57;
-  --accent:#4d4d4d;
-  --accent-soft:rgba(77,77,77,.22);
-  --accent-ghost:rgba(77,77,77,.10);
-}
-
-body.mode--sombre{
-  --fg:#f6f0ea;
-  --muted:#d6c9bc;
-  --line:rgba(255,255,255,.12);
-  --glass:rgba(15,15,18,.22);
-  --glass-strong:rgba(15,15,18,.30);
-  --glass-soft:rgba(15,15,18,.16);
-  background:
-    radial-gradient(circle at 12% 16%, rgba(255,255,255,.05), transparent 28%),
-    radial-gradient(circle at 84% 18%, rgba(255,255,255,.03), transparent 22%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 28%, #121214), color-mix(in srgb, var(--bg2) 24%, #0d0d10));
-}
-
-body.is-serious{
-  --roulette-size:150px;
-}
-
-body.is-focus{
-  --roulette-size:132px;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-button,
-input,
-select,
-textarea{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-b{
-  font-weight:800;
-}
-
-.muted{
-  color:var(--muted);
-}
-
-.helper{
-  font-size:.92rem;
-  line-height:1.4;
-}
-
-.mono{
-  font-family:ui-monospace, monospace;
-}
-
-.full-span{
-  grid-column:1/-1;
-}
-
-.grow{
-  flex:1 1 220px;
-}
-
-.inline-end{
-  display:flex;
-  align-items:flex-end;
-  justify-content:flex-end;
-}
-
-.topbar{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:3000;
-  min-height:62px;
-  padding:10px 14px;
-  display:grid;
-  grid-template-columns:60px 1fr 60px;
-  align-items:center;
-  background:var(--glass);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-.topbar__side{
-  display:flex;
-  align-items:center;
-}
-
-.topbar__side--left{
-  justify-content:flex-start;
-}
-
-.topbar__side--right{
-  justify-content:flex-end;
-}
-
-.topbar__center{
-  display:flex;
-  justify-content:center;
-}
-
-.top-actions{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-}
-
-.top-btn,
-.ghost-btn,
-.quick-link,
-.tab-btn,
-.action-btn,
-.side-action,
-.pomo-time{
-  border:none;
-  background:transparent;
-  color:var(--fg);
-  transition:background .18s ease, color .18s ease, transform .12s ease;
-}
-
-.top-btn{
-  padding:8px 12px;
-  border-radius:999px;
-  font-weight:700;
-}
-
-.top-btn:hover,
-.ghost-btn:hover,
-.quick-link:hover,
-.tab-btn:hover,
-.action-btn:hover{
-  background:var(--accent-ghost);
-}
-
-.top-btn[aria-pressed="true"],
-.tab-btn.is-active,
-.quick-link.is-active{
-  background:var(--accent-soft);
-  color:var(--fg);
-}
-
-.icon-btn{
-  width:38px;
-  height:38px;
-  border-radius:999px;
-  display:grid;
-  place-items:center;
-  font-size:1rem;
-}
-
-.panel-back{
-  position:fixed;
-  inset:0;
-  z-index:3900;
-  background:rgba(0,0,0,.26);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .22s ease;
-}
-
-.panel-back.is-show{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.side-panel{
-  position:fixed;
-  top:0;
-  bottom:0;
-  z-index:4000;
-  background:var(--glass-strong);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
-  box-shadow:var(--shadow);
-  display:flex;
-  flex-direction:column;
-  transition:transform .24s ease, width .18s ease;
-}
-
-.side-panel--left{
-  left:0;
-  width:var(--panel-left);
-  transform:translateX(-105%);
-}
-
-.side-panel--right{
-  right:0;
-  width:var(--panel-right);
-  transform:translateX(105%);
-}
-
-.side-panel.is-open{
-  transform:translateX(0);
-}
-
-.side-panel__top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:14px 14px 10px;
-}
-
-.side-panel__tools{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.panel-width-range{
-  width:110px;
-  accent-color:var(--accent);
-}
-
-.panel-title{
-  font-size:.84rem;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  color:var(--muted);
-  font-weight:800;
-}
-
-.panel-tabs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  padding:0 14px 10px;
-}
-
-.tab-btn{
-  padding:7px 10px;
-  border-radius:999px;
-  font-weight:700;
-}
-
-.side-panel__body{
-  overflow:auto;
-  padding:8px 14px 18px;
-}
-
-.tab-page{
-  display:none;
-}
-
-.tab-page.is-show{
-  display:block;
-}
-
-.hub{
-  min-height:100vh;
-  padding-top:74px;
-  display:flex;
-  justify-content:center;
-}
-
-.hub__inner{
-  width:min(1120px, 95vw);
-  padding:24px 12px 50px;
-}
-
-.app-title{
-  margin:0;
-  text-align:center;
-  font-size:clamp(58px, 10vw, 112px);
-  line-height:.95;
-  letter-spacing:.04em;
-  font-weight:800;
-}
-
-body.is-serious .app-title,
-body.is-focus .app-title{
-  letter-spacing:.12em;
-}
-
-.subtitle{
-  margin:10px 0 20px;
-  text-align:center;
-  color:var(--muted);
-}
-
-.progress-zone{
-  margin-bottom:20px;
-}
-
-.progress-bar{
-  position:relative;
-  height:82px;
-  border-radius:var(--radius-xl);
-  overflow:hidden;
-  background:rgba(255,255,255,.08);
-  box-shadow:var(--shadow);
-}
-
-.progress-fill{
-  position:absolute;
-  inset:0 auto 0 0;
-  width:100%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.16), transparent 60%),
-    linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, white));
-  transition:width .4s ease;
-}
-
-.progress-text{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  font-weight:800;
-  color:white;
-  text-shadow:0 2px 12px rgba(0,0,0,.22);
-}
-
-.main-zone{
-  padding:18px 16px 20px;
-  border-radius:var(--radius-xl);
-  background:var(--glass);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:var(--shadow);
-}
-
-.main-zone__top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:10px;
-}
-
-.hud-inline{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.hud-inline__item{
-  font-size:.88rem;
-  color:var(--muted);
-}
-
-.pomodoro-capsule{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border-radius:999px;
-  background:var(--accent-ghost);
-}
-
-.pomo-time{
-  padding:6px 10px;
-  border-radius:999px;
-  font-weight:800;
-}
-
-.pomo-time.is-running{
-  background:var(--accent-soft);
-}
-
-.status-spot{
-  min-height:22px;
-  margin-bottom:8px;
-  text-align:center;
-  color:var(--muted);
-  font-size:.92rem;
-  font-weight:700;
-}
-
-.task-title{
-  margin:18px 0 10px;
-  text-align:center;
-  font-size:clamp(34px, 5vw, 72px);
-  line-height:1.02;
-  font-weight:800;
-  letter-spacing:.01em;
-  word-break:break-word;
-}
-
-body.is-focus .task-title{
-  font-size:clamp(30px, 4.4vw, 58px);
-}
-
-.task-meta{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:10px;
-}
-
-.center-actions{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  margin:10px 0 18px;
-}
-
-.side-action{
-  width:58px;
-  height:58px;
-  border-radius:999px;
-  display:grid;
-  place-items:center;
-  font-size:1.12rem;
-  background:var(--glass-soft);
-}
-
-.side-action--bomb{
-  background:var(--accent-soft);
-}
-
-.roulette-btn{
-  border:none;
-  background:transparent;
-  padding:0;
-  width:var(--roulette-size);
-  height:var(--roulette-size);
-}
-
-.roulette-wheel{
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 28% 28%, rgba(255,255,255,.20), transparent 42%),
-    linear-gradient(145deg, var(--accent-ghost), var(--accent-soft));
-  display:grid;
-  place-items:center;
-  box-shadow:var(--shadow);
-  transition:transform .2s ease;
-}
-
-.roulette-wheel.is-spinning{
-  animation:wheelSpin .9s cubic-bezier(.2,.9,.2,1);
-}
-
-@keyframes wheelSpin{
-  from{ transform:rotate(0deg); }
-  to{ transform:rotate(720deg); }
-}
-
-.roulette-text{
-  font-weight:800;
-  font-size:1.02rem;
-}
-
-.quick-links{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:10px;
-}
-
-.quick-link{
-  padding:7px 12px;
-  border-radius:999px;
-  font-weight:700;
-}
-
-.below-list{
-  margin-top:18px;
-}
-
-.below-list__head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.field-group{
-  margin-bottom:14px;
-}
-
-.label-mini{
-  display:block;
-  margin-bottom:6px;
-  font-size:.84rem;
-  color:var(--muted);
-  font-weight:700;
-}
-
-.field{
-  width:100%;
-  border:none;
-  outline:none;
-  background:rgba(255,255,255,.06);
-  color:var(--fg);
-  border-radius:var(--radius-md);
-  padding:11px 12px;
-}
-
-.textarea{
-  resize:vertical;
-  min-height:90px;
-}
-
-.select-multiple{
-  min-height:180px;
-}
-
-.range{
-  padding:8px 0;
-  accent-color:var(--accent);
-}
-
-.field-small{
-  max-width:90px;
-}
-
-.inline-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  margin:10px 0;
-}
-
-.action-btn{
-  padding:8px 12px;
-  border-radius:999px;
-  font-weight:700;
-}
-
-.action-btn--strong{
-  background:var(--accent-soft);
-}
-
-.action-btn--danger{
-  background:rgba(184,74,74,.18);
-  color:#fff;
-}
-
-.grid-two{
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:12px;
-}
-
-.stack-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:12px;
-}
-
-.card{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  padding:10px 0;
-}
-
-.card__left{
-  min-width:0;
-  flex:1;
-}
-
-.card__title{
-  font-weight:800;
-  word-break:break-word;
-}
-
-.card__sub{
-  margin-top:4px;
-  color:var(--muted);
-  font-size:.88rem;
-}
-
-.card__actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-.soft-sep{
-  height:1px;
-  margin:14px 0;
-  background:rgba(255,255,255,.10);
-}
-
-.micro-stats{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.micro-stat{
-  color:var(--muted);
-  font-size:.9rem;
-}
-
-.surprise-box{
-  padding:14px 16px;
-  border-radius:var(--radius-lg);
-  background:var(--glass-soft);
-  box-shadow:var(--shadow);
-  line-height:1.5;
-}
-
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(10,1fr);
-  gap:6px;
-}
-
-.calendar-cell{
-  position:relative;
-  height:28px;
-  border-radius:10px;
-  overflow:hidden;
-  background:rgba(255,255,255,.06);
-}
-
-.calendar-cell__fill{
-  position:absolute;
-  inset:0;
-  background:var(--accent);
-}
-
-.calendar-cell__label{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  font-size:.70rem;
-  color:var(--fg);
-}
-
-.modal-backdrop{
-  position:fixed;
-  inset:0;
-  z-index:5000;
-  background:rgba(0,0,0,.30);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-}
-
-.glass-modal-wrap{
-  position:fixed;
-  inset:0;
-  z-index:5100;
-  display:grid;
-  place-items:center;
-  padding:18px;
-}
-
-.glass-modal{
-  width:min(920px, 96vw);
-  border-radius:var(--radius-xl);
-  background:var(--glass-strong);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
-  box-shadow:var(--shadow);
-  padding:16px;
-}
-
-.glass-modal--small{
-  width:min(560px, 96vw);
-}
-
-.glass-modal--large{
-  width:min(980px, 96vw);
-}
-
-.glass-modal__head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-.glass-modal__body--scroll{
-  max-height:min(80vh, 860px);
-  overflow:auto;
-}
-
-.overlay-page{
-  display:none;
-}
-
-.overlay-page.is-show{
-  display:block;
-}
-
-@media (max-width: 980px){
-  .main-zone__top{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .pomodoro-capsule{
-    align-self:flex-start;
-  }
-}
-
-@media (max-width: 760px){
-  .grid-two{
-    grid-template-columns:1fr;
-  }
-
-  .calendar-grid{
-    grid-template-columns:repeat(7,1fr);
-  }
-
-  .center-actions{
-    gap:12px;
-  }
-
-  .task-title{
-    font-size:clamp(28px, 7vw, 54px);
-  }
-}
-
-@media (max-width: 560px){
-  .topbar{
-    grid-template-columns:46px 1fr 46px;
-    padding:8px 10px;
-  }
-
-  .top-actions{
-    gap:6px;
-  }
-
-  .top-btn{
-    padding:6px 10px;
-    font-size:.88rem;
-  }
-
-  .hub__inner{
-    width:min(96vw, 96vw);
-    padding:18px 8px 40px;
-  }
-
-  .app-title{
-    font-size:clamp(46px, 14vw, 78px);
-  }
-
-  .roulette-btn{
-    width:132px;
-    height:132px;
-  }
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ELIMINATOR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Yusei+Magic&family=Zen+Maru+Gothic:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Kosugi+Maru&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header id="topBar" class="topbar">
+    <div class="topbar__side topbar__side--left">
+      <button id="btnLeft" class="icon-btn ghost-btn" type="button" aria-label="Ouvrir le panneau gauche">≡</button>
+    </div>
+
+    <div class="topbar__center">
+      <div class="top-actions">
+        <button id="modeToggle" class="top-btn" type="button" aria-pressed="false">Clair</button>
+        <button id="seasonCycle" class="top-btn" type="button">Automne</button>
+        <button id="seriousToggle" class="top-btn" type="button" aria-pressed="false">Sérieux</button>
+        <button id="focusBtn" class="top-btn" type="button" aria-pressed="false">Focus</button>
+        <button id="listToggleBtn" class="top-btn" type="button" aria-pressed="false">Liste</button>
+        <button id="setsToggleBtn" class="top-btn" type="button">Sets</button>
+      </div>
+    </div>
+
+    <div class="topbar__side topbar__side--right">
+      <button id="btnRight" class="icon-btn ghost-btn" type="button" aria-label="Ouvrir le panneau droit">⋮</button>
+    </div>
+  </header>
+
+  <div id="panelBack" class="panel-back" aria-hidden="true"></div>
+
+  <!-- PANNEAU GAUCHE -->
+  <aside id="leftPanel" class="side-panel side-panel--left" aria-label="Panneau gauche">
+    <div class="side-panel__top">
+      <div class="panel-title">Menu</div>
+      <div class="side-panel__tools">
+        <input id="leftPanelWidth" class="panel-width-range" type="range" min="300" max="620" step="10" value="380" title="Largeur panneau gauche">
+        <button id="leftClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer le panneau gauche">×</button>
+      </div>
+    </div>
+
+    <nav class="panel-tabs" aria-label="Onglets panneau gauche">
+      <button class="tab-btn is-active" data-lefttab="inbox" type="button">Inbox</button>
+      <button class="tab-btn" data-lefttab="tasks" type="button">Tâches</button>
+      <button class="tab-btn" data-lefttab="kiffance" type="button">Kiffance</button>
+      <button class="tab-btn" data-lefttab="prefs" type="button">Préférences</button>
+      <button class="tab-btn" data-lefttab="export" type="button">Export</button>
+    </nav>
+
+    <div class="side-panel__body">
+      <!-- INBOX -->
+      <section id="left-inbox" class="tab-page is-show">
+        <p class="muted helper">
+          Une ligne = une tâche. Une ligne en MAJUSCULES = une catégorie.
+          <br>
+          Exemple :
+          <br><span class="mono">ADMIN</span>
+          <br><span class="mono">Répondre à Anna - 2</span>
+          <br><span class="mono">Rapport patient 3</span>
+        </p>
+
+        <textarea
+          id="inboxText"
+          class="field textarea"
+          rows="12"
+          placeholder="ADMIN
+Répondre à Anna - 2
+Rapport patient 3
+
+PERSO
+Batterie 2
+Ranger bureau 1"
+        ></textarea>
+
+        <div class="inline-actions">
+          <button id="inboxAdd" class="action-btn action-btn--strong" type="button">Ajouter</button>
+          <button id="inboxClear" class="action-btn" type="button">Effacer</button>
+        </div>
+
+        <div class="soft-sep"></div>
+
+        <div class="micro-stats">
+          <div class="micro-stat">Actives <b id="statActive">0</b></div>
+          <div class="micro-stat">Finies <b id="statDone">0</b></div>
+          <div class="micro-stat">Étorions <b id="statEtorions">0</b></div>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="left-tasks" class="tab-page">
+        <div class="field-group">
+          <label for="catFilter" class="label-mini">Catégories</label>
+          <select id="catFilter" class="field select select-multiple" multiple size="8"></select>
+          <div class="helper muted">Tu peux sélectionner plusieurs catégories, y compris <b>CE JOUR</b>.</div>
+        </div>
+
+        <div class="grid-two">
+          <div class="field-group">
+            <label for="viewFilter" class="label-mini">Vue</label>
+            <select id="viewFilter" class="field select">
+              <option value="active">Actives</option>
+              <option value="done">Finies</option>
+              <option value="all">Toutes</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="sortFilter" class="label-mini">Tri</label>
+            <select id="sortFilter" class="field select">
+              <option value="roulette">Roulette</option>
+              <option value="ordre">Ordre d’import</option>
+              <option value="alpha">Alphabétique</option>
+              <option value="cat">Par catégorie</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="taskList" class="stack-list"></div>
+      </section>
+
+      <!-- KIFFANCE -->
+      <section id="left-kiffance" class="tab-page">
+        <p class="muted helper">
+          Les kiffances restent des surprises. Tu peux enrichir la réserve, mais la liste ne s’exhibe pas comme un menu de fast-food dopaminergique.
+        </p>
+
+        <div class="inline-actions">
+          <input id="kiffNew" class="field input grow" type="text" placeholder="Ajouter une nouvelle kiffance…">
+          <button id="kiffAdd" class="action-btn action-btn--strong" type="button">+</button>
+        </div>
+
+        <div class="inline-actions">
+          <button id="kiffSuggest" class="action-btn" type="button">Surprise</button>
+          <button id="kiffToTask" class="action-btn" type="button">En tâche</button>
+        </div>
+
+        <div id="kiffSuggestionBox" class="surprise-box">Aucune surprise pour le moment.</div>
+      </section>
+
+      <!-- PREFS -->
+      <section id="left-prefs" class="tab-page">
+        <div class="grid-two">
+          <div class="field-group">
+            <label for="modeSel" class="label-mini">Mode</label>
+            <select id="modeSel" class="field select">
+              <option value="clair">Clair</option>
+              <option value="sombre">Sombre</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="seasonSel" class="label-mini">Saison</label>
+            <select id="seasonSel" class="field select">
+              <option value="printemps">Printemps</option>
+              <option value="ete">Été</option>
+              <option value="automne">Automne</option>
+              <option value="hiver">Hiver</option>
+              <option value="noirblanc">Noir & blanc</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="fontSel" class="label-mini">Police</label>
+            <select id="fontSel" class="field select">
+              <option value="yusei">Yusei Magic</option>
+              <option value="zen">Zen Maru Gothic</option>
+              <option value="mplus">M PLUS Rounded</option>
+              <option value="kosugi">Kosugi Maru</option>
+              <option value="inter">Inter</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="uiScale" class="label-mini">Taille UI</label>
+            <input id="uiScale" class="field range" type="range" min="14" max="18" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="seriousSel" class="label-mini">Mode sérieux</label>
+            <select id="seriousSel" class="field select">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="keepListFocusSel" class="label-mini">Liste en focus</label>
+            <select id="keepListFocusSel" class="field select">
+              <option value="true">Visible</option>
+              <option value="false">Masquée</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="fatigueSel" class="label-mini">Fatigue</label>
+            <input id="fatigueSel" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="motivationSel" class="label-mini">Motivation</label>
+            <input id="motivationSel" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="workMinSel" class="label-mini">Pomodoro</label>
+            <input id="workMinSel" class="field input" type="number" min="5" max="90" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="breakMinSel" class="label-mini">Pause</label>
+            <input id="breakMinSel" class="field input" type="number" min="1" max="30" step="1">
+          </div>
+        </div>
+
+        <div class="inline-actions">
+          <button id="prefsApply" class="action-btn action-btn--strong" type="button">Appliquer</button>
+          <button id="prefsReset" class="action-btn" type="button">Reset prefs</button>
+        </div>
+      </section>
+
+      <!-- EXPORT -->
+      <section id="left-export" class="tab-page">
+        <div class="inline-actions">
+          <button id="exportBtn" class="action-btn" type="button">Copier JSON</button>
+          <button id="reportBtn" class="action-btn" type="button">Rapport du jour</button>
+          <button id="wipeBtn" class="action-btn action-btn--danger" type="button">Reset total</button>
+        </div>
+
+        <textarea id="exportOut" class="field textarea" rows="14" readonly></textarea>
+      </section>
+    </div>
+  </aside>
+
+  <!-- CENTRE -->
+  <main id="hub" class="hub">
+    <div class="hub__inner">
+      <h1 id="appTitle" class="app-title">ELIMINATOR</h1>
+      <p id="subtitle" class="subtitle">Une quête après l’autre.</p>
+
+      <section class="progress-zone" aria-label="Progression">
+        <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div id="progressFill" class="progress-fill"></div>
+          <div id="progressPctIn" class="progress-text">100%</div>
+        </div>
+      </section>
+
+      <section class="main-zone" aria-label="Mission courante">
+        <div class="main-zone__top">
+          <div class="hud-inline">
+            <span id="pillTasks" class="hud-inline__item">0/0 tâches</span>
+            <span id="pillEto" class="hud-inline__item">0/0 étorions</span>
+            <span id="pillDone" class="hud-inline__item">0 faite</span>
+            <span id="pillMode" class="hud-inline__item">mode: normal</span>
+            <span id="pillFlow" class="hud-inline__item">flow: stable</span>
+          </div>
+
+          <div class="pomodoro-capsule">
+            <button id="pomoTime" class="pomo-time" type="button" title="Play / pause pomodoro">25:00</button>
+            <button id="pomoEdit" class="icon-btn ghost-btn" type="button" title="Réglages pomodoro">✎</button>
+          </div>
+        </div>
+
+        <div id="statusSpot" class="status-spot" aria-live="polite"></div>
+
+        <div id="taskTitle" class="task-title">Aucune tâche sélectionnée</div>
+
+        <div id="taskMetaDetails" class="task-meta" hidden>
+          Catégorie : <span id="metaCat">—</span>
+          · Étorions : <span id="metaEt">—</span>
+          · Temps : <span id="metaTimer">00:00</span>
+        </div>
+
+        <div class="center-actions">
+          <button id="undoBtn" class="side-action" type="button" title="Retour arrière">↶</button>
+
+          <button id="rouletteBtn" class="roulette-btn" type="button" aria-label="Roulette">
+            <div id="rouletteWheel" class="roulette-wheel">
+              <span class="roulette-text">Roulette</span>
+            </div>
+          </button>
+
+          <button id="bombBtn" class="side-action side-action--bomb" type="button" title="Dégommer un étorion">💣</button>
+        </div>
+
+        <div class="quick-links">
+          <button id="openNotes" class="quick-link" type="button">Notes</button>
+          <button id="openTyphonse" class="quick-link" type="button">Typhonse</button>
+          <button id="openKiffance" class="quick-link" type="button">Kiffance</button>
+          <button id="openStats" class="quick-link" type="button">Stats</button>
+          <button id="taskInfoBtn" class="quick-link" type="button">Détails</button>
+          <button id="belowListToggleBtn" class="quick-link" type="button">Liste</button>
+          <button id="doneTaskBtn" class="quick-link" type="button">Terminer</button>
+          <button id="editTaskBtn" class="quick-link" type="button">Éditer</button>
+        </div>
+
+        <section id="belowList" class="below-list" hidden>
+          <div class="below-list__head">
+            <div class="panel-title">Liste en cours</div>
+            <button id="btnHideBelow" class="action-btn" type="button">Masquer</button>
+          </div>
+          <div id="belowTasks" class="stack-list"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <!-- PANNEAU DROIT -->
+  <aside id="rightPanel" class="side-panel side-panel--right" aria-label="Panneau droit">
+    <div class="side-panel__top">
+      <div class="panel-title">Panneau</div>
+      <div class="side-panel__tools">
+        <input id="rightPanelWidth" class="panel-width-range" type="range" min="320" max="720" step="10" value="430" title="Largeur panneau droit">
+        <button id="rightClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer le panneau droit">×</button>
+      </div>
+    </div>
+
+    <nav class="panel-tabs" aria-label="Onglets panneau droit">
+      <button class="tab-btn is-active" data-righttab="sets" type="button">Sets</button>
+      <button class="tab-btn" data-righttab="habits" type="button">Habitudes</button>
+      <button class="tab-btn" data-righttab="flow" type="button">Flow</button>
+      <button class="tab-btn" data-righttab="history" type="button">Hist</button>
+      <button class="tab-btn" data-righttab="notes" type="button">Notes</button>
+      <button class="tab-btn" data-righttab="stats" type="button">Stats</button>
+    </nav>
+
+    <div class="side-panel__body">
+      <!-- SETS -->
+      <section id="right-sets" class="tab-page is-show">
+        <div class="grid-two">
+          <div class="field-group">
+            <label for="hospPatients" class="label-mini">Hospitalier</label>
+            <input id="hospPatients" class="field input" type="number" min="1" max="20">
+          </div>
+          <div class="inline-end">
+            <button id="hospResetToday" class="action-btn" type="button">Reset</button>
+          </div>
+
+          <div class="field-group">
+            <label for="consPatients" class="label-mini">Consultation</label>
+            <input id="consPatients" class="field input" type="number" min="1" max="30">
+          </div>
+          <div class="inline-end">
+            <button id="consResetToday" class="action-btn" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div id="setsContent" class="stack-list"></div>
+      </section>
+
+      <!-- HABITS -->
+      <section id="right-habits" class="tab-page">
+        <div class="inline-actions">
+          <input id="habitName" class="field input grow" type="text" placeholder="Nom de l’habitude">
+          <input id="habitSlots" class="field input field-small" type="number" min="3" max="12" value="8">
+          <button id="habitAddBtn" class="action-btn action-btn--strong" type="button">Ajouter</button>
+        </div>
+
+        <div id="habitsContent" class="stack-list"></div>
+      </section>
+
+      <!-- FLOW -->
+      <section id="right-flow" class="tab-page">
+        <div class="grid-two">
+          <div class="field-group">
+            <label for="fatigueInline" class="label-mini">Fatigue</label>
+            <input id="fatigueInline" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="motivationInline" class="label-mini">Motivation</label>
+            <input id="motivationInline" class="field range" type="range" min="0" max="4" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="celeChanceInline" class="label-mini">Célébrations</label>
+            <input id="celeChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
+          </div>
+
+          <div class="field-group">
+            <label for="tipsChanceInline" class="label-mini">Conseils</label>
+            <input id="tipsChanceInline" class="field input" type="number" min="0" max="1" step="0.05">
+          </div>
+        </div>
+
+        <div class="inline-actions">
+          <button id="saveFlowBtn" class="action-btn action-btn--strong" type="button">Sauver</button>
+          <button id="testTipBtn" class="action-btn" type="button">Test conseil</button>
+          <button id="testCeleBtn" class="action-btn" type="button">Test célébration</button>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="right-history" class="tab-page">
+        <div id="historyContent" class="stack-list"></div>
+        <div class="soft-sep"></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
+      <!-- NOTES -->
+      <section id="right-notes" class="tab-page">
+        <div class="field-group">
+          <label for="notesAreaPanel" class="label-mini">Notes</label>
+          <textarea id="notesAreaPanel" class="field textarea" rows="7" placeholder="Bloc-notes principal"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="remindersAreaPanel" class="label-mini">Rappels</label>
+          <textarea id="remindersAreaPanel" class="field textarea" rows="6" placeholder="Rappels / aide-mémoire"></textarea>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section id="right-stats" class="tab-page">
+        <div id="statsContentPanel" class="stack-list"></div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- MODAL BACK -->
+  <div id="modalBack" class="modal-backdrop" hidden></div>
+
+  <!-- MODAL POMODORO -->
+  <div id="pomoModal" class="glass-modal-wrap" hidden role="dialog" aria-modal="true" aria-label="Réglages pomodoro">
+    <div class="glass-modal glass-modal--small">
+      <div class="glass-modal__head">
+        <div class="panel-title">Pomodoro</div>
+        <button id="modalClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="glass-modal__body">
+        <div class="grid-two">
+          <div class="field-group">
+            <label for="pomoMinutes" class="label-mini">Pomodoro</label>
+            <input id="pomoMinutes" class="field input" type="number" min="5" max="90" step="1">
+          </div>
+
+          <div class="field-group">
+            <label for="breakMinutes" class="label-mini">Pause</label>
+            <input id="breakMinutes" class="field input" type="number" min="1" max="30" step="1">
+          </div>
+
+          <div class="field-group full-span">
+            <label for="autoStartSel" class="label-mini">Auto-start</label>
+            <select id="autoStartSel" class="field select">
+              <option value="auto">Automatique</option>
+              <option value="manual">Manuel</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="inline-actions">
+          <button id="pomoApply" class="action-btn action-btn--strong" type="button">Appliquer</button>
+          <button id="pomoReset" class="action-btn" type="button">Reset timer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY CENTRAL -->
+  <div id="overlayModal" class="glass-modal-wrap" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
+    <div class="glass-modal glass-modal--large">
+      <div class="glass-modal__head">
+        <div id="overlayTitle" class="panel-title">Fenêtre</div>
+        <button id="overlayClose" class="icon-btn ghost-btn" type="button" aria-label="Fermer">×</button>
+      </div>
+
+      <div class="glass-modal__body glass-modal__body--scroll">
+        <!-- NOTES -->
+        <section id="overlay-notes" class="overlay-page" hidden>
+          <div class="field-group">
+            <label for="notesArea" class="label-mini">Notes</label>
+            <textarea id="notesArea" class="field textarea" rows="10" placeholder="Écris ici."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="remindersArea" class="label-mini">Rappels</label>
+            <textarea id="remindersArea" class="field textarea" rows="7" placeholder="• Demain : …"></textarea>
+          </div>
+
+          <div class="soft-sep"></div>
+          <div class="panel-title">Historique rapide</div>
+          <div id="notesEntriesList" class="stack-list"></div>
+        </section>
+
+        <!-- TYPHONSE -->
+        <section id="overlay-typhonse" class="overlay-page" hidden>
+          <div class="inline-actions">
+            <input id="typhonseInput" class="field input grow" type="text" placeholder="Ajouter un item Typhonse">
+            <button id="btnAddTyphonse" class="action-btn action-btn--strong" type="button">Ajouter</button>
+          </div>
+
+          <div id="typhonseList" class="stack-list"></div>
+        </section>
+
+        <!-- KIFFANCE -->
+        <section id="overlay-kiffance" class="overlay-page" hidden>
+          <p class="muted helper">Ici aussi, les surprises restent des surprises. On ne transforme pas le mystère en inventaire Excel.</p>
+
+          <div id="overlayKiffSuggestion" class="surprise-box">Aucune surprise.</div>
+
+          <div class="inline-actions">
+            <button id="overlayKiffRefresh" class="action-btn" type="button">Nouvelle surprise</button>
+            <button id="overlayKiffToTask" class="action-btn action-btn--strong" type="button">Ajouter en tâche</button>
+          </div>
+        </section>
+
+        <!-- STATS -->
+        <section id="overlay-stats" class="overlay-page" hidden>
+          <div id="statsContent" class="stack-list"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="state.js"></script>
+</body>
+</html>
