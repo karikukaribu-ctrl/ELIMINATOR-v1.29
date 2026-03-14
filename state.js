@@ -41,7 +41,7 @@ const CELEBRATIONS = {
     },
     {
       title: "LE BÂTON A FRAPPÉ LE PAVÉ",
-      msg: "Quelque part, un Gandalf blanc approuve d’un hochement de sourcil et dit qu’en effet, tu passeras."
+      msg: "Quelque part, Gandalf le Blanc approuve d’un hochement de sourcil et décrète que, oui, tu passeras."
     }
   ],
   dream: [
@@ -55,7 +55,7 @@ const CELEBRATIONS = {
     },
     {
       title: "ORIGAMI DU TEMPS RÉUSSI",
-      msg: "Tu as pris une minute informe et tu en as fait une forme utile. Le réel trouve cela un peu vexant."
+      msg: "Tu as pris une minute informe et tu en as fait une forme utile. Le réel trouve cela vaguement insultant."
     }
   ],
   ninja: [
@@ -128,7 +128,9 @@ const defaultState = {
     focus: false,
     font: "yusei",
     baseSize: 16,
-    showBelowList: false
+    showBelowList: false,
+    leftPanelWidth: 380,
+    rightPanelWidth: 430
   },
 
   settings: {
@@ -159,7 +161,9 @@ const defaultState = {
     "Range 10 objets. Pas 47.",
     "Respire 5 cycles lents.",
     "Étire nuque et épaules 45 secondes.",
-    "Regarde au loin 20 secondes. Reviens."
+    "Regarde au loin 20 secondes. Reviens.",
+    "Micro-reset : eau, respiration, retour.",
+    "Fenêtre ouverte 30 secondes. Puis reprise nette."
   ],
 
   pomodoro: {
@@ -385,6 +389,21 @@ function status(message, ms = 4200){
 }
 
 /* =========================
+   DOM SAFETY
+========================= */
+
+function setRootCssVars(){
+  document.documentElement.style.setProperty("--baseSize", `${clamp(state.ui.baseSize, 14, 18)}px`);
+  document.documentElement.style.setProperty("--panelLeft", `${clamp(state.ui.leftPanelWidth || 380, 300, 620)}px`);
+  document.documentElement.style.setProperty("--panelRight", `${clamp(state.ui.rightPanelWidth || 430, 320, 720)}px`);
+}
+
+function syncPanelWidthInputs(){
+  if($("leftPanelWidth")) $("leftPanelWidth").value = String(clamp(state.ui.leftPanelWidth || 380, 300, 620));
+  if($("rightPanelWidth")) $("rightPanelWidth").value = String(clamp(state.ui.rightPanelWidth || 430, 320, 720));
+}
+
+/* =========================
    THEME + MODES
 ========================= */
 
@@ -404,7 +423,7 @@ function applyTheme(){
   document.body.classList.toggle("is-serious", !!state.ui.serious);
   document.body.classList.toggle("is-focus", !!state.ui.focus);
   document.body.setAttribute("data-font", state.ui.font);
-  document.documentElement.style.setProperty("--baseSize", `${clamp(state.ui.baseSize, 14, 18)}px`);
+  setRootCssVars();
 
   if($("modeToggle")){
     $("modeToggle").textContent = state.ui.mode === "sombre" ? "Sombre" : "Clair";
@@ -436,23 +455,37 @@ function applyTheme(){
    PANELS + TABS
 ========================= */
 
+function showPanelBack(show){
+  const el = $("panelBack");
+  if(!el) return;
+  if(show){
+    el.removeAttribute("hidden");
+  }else{
+    el.setAttribute("hidden", "");
+  }
+}
+
 function openPanel(which){
-  $("panelBack")?.classList.add("is-show");
+  const left = $("leftPanel");
+  const right = $("rightPanel");
+  if(!left || !right) return;
+
+  showPanelBack(true);
   document.body.style.overflow = "hidden";
 
   if(which === "left"){
-    $("leftPanel")?.classList.add("is-open");
-    $("rightPanel")?.classList.remove("is-open");
+    left.removeAttribute("hidden");
+    right.setAttribute("hidden", "");
   }else{
-    $("rightPanel")?.classList.add("is-open");
-    $("leftPanel")?.classList.remove("is-open");
+    right.removeAttribute("hidden");
+    left.setAttribute("hidden", "");
   }
 }
 
 function closePanels(){
-  $("panelBack")?.classList.remove("is-show");
-  $("leftPanel")?.classList.remove("is-open");
-  $("rightPanel")?.classList.remove("is-open");
+  $("leftPanel")?.setAttribute("hidden", "");
+  $("rightPanel")?.setAttribute("hidden", "");
+  showPanelBack(false);
   document.body.style.overflow = "";
 }
 
@@ -493,12 +526,22 @@ function bindTabs(){
 }
 
 /* =========================
-   OVERLAYS
+   OVERLAYS / MODALS
 ========================= */
+
+function showModalBack(show){
+  const el = $("modalBack");
+  if(!el) return;
+  if(show){
+    el.removeAttribute("hidden");
+  }else{
+    el.setAttribute("hidden", "");
+  }
+}
 
 function closeOverlay(){
   $("overlayModal")?.setAttribute("hidden", "");
-  $("modalBack")?.setAttribute("hidden", "");
+  showModalBack(false);
   $$(".overlay-page").forEach(page => {
     page.setAttribute("hidden", "");
     page.classList.remove("is-show");
@@ -507,7 +550,7 @@ function closeOverlay(){
 
 function openOverlay(which){
   $("overlayModal")?.removeAttribute("hidden");
-  $("modalBack")?.removeAttribute("hidden");
+  showModalBack(true);
 
   $$(".overlay-page").forEach(page => {
     page.setAttribute("hidden", "");
@@ -535,6 +578,20 @@ function openOverlay(which){
     suggestKiffance();
   }
   if(which === "stats") renderStatsPanel();
+}
+
+function openPomoModal(){
+  $("pomoModal")?.removeAttribute("hidden");
+  showModalBack(true);
+
+  if($("pomoMinutes")) $("pomoMinutes").value = state.pomodoro.workMin;
+  if($("breakMinutes")) $("breakMinutes").value = state.pomodoro.breakMin;
+  if($("autoStartSel")) $("autoStartSel").value = state.pomodoro.autoStart;
+}
+
+function closePomoModal(){
+  $("pomoModal")?.setAttribute("hidden", "");
+  showModalBack(false);
 }
 
 /* =========================
@@ -646,7 +703,6 @@ function importFromInbox(text){
 
 function activeTasks(){
   const included = state.settings.includedCats;
-
   let base = state.tasks.filter(task => !task.done);
 
   if(included && included.length > 0){
@@ -670,45 +726,45 @@ function getTask(id){
 function sortTasks(list){
   const mode = state.settings.listSort || "roulette";
 
-  const todayBoost = (task) => task.today ? -1 : 0;
-  const pinBoost = (task) => task.pinned ? -1 : 0;
+  const todayScore = (task) => task.today ? -1 : 0;
+  const pinScore = (task) => task.pinned ? -1 : 0;
 
   if(mode === "alpha"){
     return [...list].sort((a, b) => {
-      const ta = todayBoost(a) - todayBoost(b);
-      if(ta !== 0) return ta;
-      const pa = pinBoost(a) - pinBoost(b);
-      if(pa !== 0) return pa;
+      const t = todayScore(a) - todayScore(b);
+      if(t !== 0) return t;
+      const p = pinScore(a) - pinScore(b);
+      if(p !== 0) return p;
       return a.title.localeCompare(b.title, "fr");
     });
   }
 
   if(mode === "cat"){
     return [...list].sort((a, b) => {
-      const ta = todayBoost(a) - todayBoost(b);
-      if(ta !== 0) return ta;
-      const pa = pinBoost(a) - pinBoost(b);
-      if(pa !== 0) return pa;
-      const catCompare = a.cat.localeCompare(b.cat, "fr");
-      return catCompare !== 0 ? catCompare : a.title.localeCompare(b.title, "fr");
+      const t = todayScore(a) - todayScore(b);
+      if(t !== 0) return t;
+      const p = pinScore(a) - pinScore(b);
+      if(p !== 0) return p;
+      const c = a.cat.localeCompare(b.cat, "fr");
+      return c !== 0 ? c : a.title.localeCompare(b.title, "fr");
     });
   }
 
   if(mode === "ordre"){
     return [...list].sort((a, b) => {
-      const ta = todayBoost(a) - todayBoost(b);
-      if(ta !== 0) return ta;
-      const pa = pinBoost(a) - pinBoost(b);
-      if(pa !== 0) return pa;
+      const t = todayScore(a) - todayScore(b);
+      if(t !== 0) return t;
+      const p = pinScore(a) - pinScore(b);
+      if(p !== 0) return p;
       return (a.createdAt || "").localeCompare(b.createdAt || "");
     });
   }
 
   return [...list].sort((a, b) => {
-    const ta = todayBoost(a) - todayBoost(b);
-    if(ta !== 0) return ta;
-    const pa = pinBoost(a) - pinBoost(b);
-    if(pa !== 0) return pa;
+    const t = todayScore(a) - todayScore(b);
+    if(t !== 0) return t;
+    const p = pinScore(a) - pinScore(b);
+    if(p !== 0) return p;
     return (a.createdAt || "").localeCompare(b.createdAt || "");
   });
 }
@@ -724,8 +780,8 @@ function ensureCurrentTask(){
   }
 
   if(!current || current.done){
-    const pinned = actives.find(task => task.pinned);
     const today = actives.find(task => task.today);
+    const pinned = actives.find(task => task.pinned);
     state.currentTaskId = (today || pinned || actives[0]).id;
     state.currentTaskStart = Date.now();
   }
@@ -764,8 +820,8 @@ function roulettePick(){
   const tasks = activeTasks();
   if(tasks.length === 0) return null;
 
-  const pinned = tasks.filter(task => task.pinned);
   const today = tasks.filter(task => task.today);
+  const pinned = tasks.filter(task => task.pinned);
   let pool = today.length ? today : (pinned.length ? pinned : [...tasks]);
 
   pool.sort((a, b) => (a.etorionsLeft || a.etorionsTotal) - (b.etorionsLeft || b.etorionsTotal));
@@ -899,7 +955,6 @@ function degommeEtorion(){
   maybeShowTip();
   saveState();
   renderAll();
-
   status("💣 Un étorion de moins.");
 }
 
@@ -953,14 +1008,16 @@ function weightedCelebrationPool(){
   const pool = [];
   Object.entries(CELEBRATIONS).forEach(([family, arr]) => {
     const w = Math.max(1, Math.round((weights[family] || 1) * 2));
-    for(let i=0; i<w; i++) pool.push(...arr.map(x => ({ ...x, family })));
+    for(let i = 0; i < w; i++){
+      pool.push(...arr.map(item => ({ ...item, family })));
+    }
   });
+
   return pool;
 }
 
 function pickCelebration(){
-  const pool = weightedCelebrationPool();
-  return pickRandom(pool);
+  return pickRandom(weightedCelebrationPool());
 }
 
 function ensureCelebrationShell(){
@@ -984,10 +1041,10 @@ function ensureCelebrationShell(){
       max-width:min(760px,92vw);
       padding:20px 22px;
       border-radius:22px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(255,255,255,.14);
-      backdrop-filter:blur(18px);
-      -webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.12);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
       box-shadow:0 18px 44px rgba(0,0,0,.18);
       text-align:center;
       color:white;
@@ -1020,10 +1077,10 @@ function runFireworks(canvas){
 
   for(let burst = 0; burst < 4; burst++){
     const cx = Math.random() * w * 0.8 + w * 0.1;
-    const cy = Math.random() * h * 0.45 + h * 0.10;
+    const cy = Math.random() * h * 0.45 + h * 0.1;
     const count = 40 + Math.floor(Math.random() * 22);
 
-    for(let i=0; i<count; i++){
+    for(let i = 0; i < count; i++){
       const angle = (Math.PI * 2 * i) / count;
       const speed = 1.6 + Math.random() * 3.8;
       particles.push({
@@ -1040,7 +1097,7 @@ function runFireworks(canvas){
   }
 
   const confetti = [];
-  for(let i=0; i<120; i++){
+  for(let i = 0; i < 120; i++){
     confetti.push({
       x: Math.random() * w,
       y: -20 - Math.random() * 100,
@@ -1055,6 +1112,7 @@ function runFireworks(canvas){
   }
 
   let frame = 0;
+
   function tick(){
     frame++;
     ctx.clearRect(0, 0, w, h);
@@ -1122,7 +1180,6 @@ function maybeShowCelebration(force = false){
   if(msg) msg.textContent = cele.msg;
 
   shell.removeAttribute("hidden");
-  shell.style.pointerEvents = "none";
   runFireworks(canvas);
 
   state.stats.celebrationsShown += 1;
@@ -1145,7 +1202,6 @@ function renderSubtitle(){
 
 function renderProgress(){
   const p = computeProgress();
-
   if($("progressFill")) $("progressFill").style.width = `${p.pct}%`;
   if($("progressPctIn")) $("progressPctIn").textContent = `${p.pct}%`;
   if($("progressBar")) $("progressBar").setAttribute("aria-valuenow", String(p.pct));
@@ -1161,10 +1217,6 @@ function renderHub(){
   if($("statActive")) $("statActive").textContent = String(act.length);
   if($("statDone")) $("statDone").textContent = String(done.length);
   if($("statEtorions")) $("statEtorions").textContent = String(p.remE);
-
-  if($("missionLineLeft")){
-    $("missionLineLeft").textContent = `Tâches en cours (${done.length} finies · ${act.length}/${p.baseTasks || act.length || 0})`;
-  }
 
   if($("pillTasks")) $("pillTasks").textContent = `${p.remT}/${p.baseTasks || 0} tâches`;
   if($("pillEto")) $("pillEto").textContent = `${p.remE}/${p.baseEtorions || 0} étorions`;
@@ -1299,7 +1351,6 @@ function renderCatFilter(){
   if(!select) return;
 
   const selected = state.settings.includedCats || [];
-
   select.innerHTML = categories().map(cat => `
     <option value="${escapeHTML(cat)}" ${selected.includes(cat) ? "selected" : ""}>${escapeHTML(cat)}</option>
   `).join("");
@@ -1328,7 +1379,7 @@ function renderTasksPanel(){
   if(view === "done") list = list.filter(task => task.done);
 
   const included = state.settings.includedCats || [];
-  if(included.length > 0 && !included.includes("Toutes")){
+  if(included.length > 0){
     list = list.filter(task => {
       if(included.includes("CE JOUR") && task.today) return true;
       return included.includes(task.cat);
@@ -1562,7 +1613,6 @@ function addKiffanceAsTask(){
   renderAll();
 }
 
-/* Surprise only: pas de liste détaillée visible */
 function renderKiffance(){
   suggestKiffance();
 }
@@ -1623,18 +1673,19 @@ function renderHabitsPanel(){
     const progress = habitProgress(habit);
 
     return `
-      <div class="soft-card">
-        <div class="card__title">${escapeHTML(habit.name)} (${progress.done}/${progress.total})</div>
-
-        <div class="row row--wrap">
-          ${habit.checks.map((checked, idx) => `
-            <button class="icon-btn" data-habit-id="${habit.id}" data-habit-index="${idx}" title="Case">${checked ? "✓" : "·"}</button>
-          `).join("")}
+      <div class="card">
+        <div class="card__left">
+          <div class="card__title">${escapeHTML(habit.name)} (${progress.done}/${progress.total})</div>
+          <div class="row">
+            ${habit.checks.map((checked, idx) => `
+              <button class="icon-btn" data-habit-id="${habit.id}" data-habit-index="${idx}" title="Case">${checked ? "✓" : "·"}</button>
+            `).join("")}
+          </div>
         </div>
 
-        <div class="row row--wrap">
-          <button class="btn btn--ghost" data-habit-act="reset" data-habit="${habit.id}" type="button">Reset</button>
-          <button class="btn btn--ghost" data-habit-act="del" data-habit="${habit.id}" type="button">Supprimer</button>
+        <div class="card__actions">
+          <button class="action-btn" data-habit-act="reset" data-habit="${habit.id}" type="button">Reset</button>
+          <button class="action-btn" data-habit-act="del" data-habit="${habit.id}" type="button">Supprimer</button>
         </div>
       </div>
     `;
@@ -1731,7 +1782,6 @@ function renameSetPatient(setName, patientId, nextName){
   const cleaned = String(nextName || "").trim();
   patient.name = cleaned || "Patient";
   saveState();
-  renderSetsPanel();
 }
 
 function summarizeSetsToday(){
@@ -1763,42 +1813,38 @@ function renderSetsPanel(){
     const checks = set.checks?.[dk] || {};
 
     let html = `
-      <div class="soft-card">
-        <div class="card__title">${title}</div>
-        <div class="card__sub">${Object.values(checks).filter(Boolean).length}/${set.patients.length * set.itemsPerPatient.length}</div>
+      <div class="card">
+        <div class="card__left">
+          <div class="card__title">${title}</div>
+          <div class="card__sub">${Object.values(checks).filter(Boolean).length}/${set.patients.length * set.itemsPerPatient.length}</div>
     `;
 
     set.patients.forEach((patient, idx) => {
       html += `
-        <div class="divider"></div>
-        <div class="row row--wrap">
-          <div class="grow">
-            <label class="muted small">Patient ${idx + 1}</label>
-            <input class="field input" data-patient-rename="${setKey}|${patient.id}" value="${escapeHTML(patient.name)}">
-          </div>
+        <div class="soft-sep"></div>
+        <div class="field-group">
+          <label class="label-mini">Patient ${idx + 1}</label>
+          <input class="field input" data-patient-rename="${setKey}|${patient.id}" value="${escapeHTML(patient.name)}">
         </div>
+        <div class="row">
       `;
 
       set.itemsPerPatient.forEach(item => {
         const key = setKeyItem(setKey, patient.id, item);
         const checked = !!checks[key];
-
         html += `
-          <div class="card">
-            <div class="card__left">
-              <button
-                class="btn ${checked ? "btn--primary" : "btn--ghost"}"
-                type="button"
-                data-set-click="${setKey}|${patient.id}|${encodeURIComponent(item)}"
-                style="border-radius:10px;"
-              >${escapeHTML(item)}</button>
-            </div>
-          </div>
+          <button
+            class="action-btn ${checked ? "action-btn--accent" : ""}"
+            type="button"
+            data-set-click="${setKey}|${patient.id}|${encodeURIComponent(item)}"
+          >${escapeHTML(item)}</button>
         `;
       });
+
+      html += `</div>`;
     });
 
-    html += `</div>`;
+    html += `</div></div>`;
     return html;
   };
 
@@ -1925,7 +1971,7 @@ function renderMiniBars(series, key, maxValue){
     return `
       <div style="display:grid;grid-template-columns:34px 1fr 32px;gap:8px;align-items:center;">
         <div class="card__sub">${dayNum}</div>
-        <div style="height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.08);">
+        <div style="height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;">
           <div style="height:100%;width:${width}%;background:var(--accent);border-radius:999px;"></div>
         </div>
         <div class="card__sub" style="text-align:right;">${v}</div>
@@ -1993,26 +2039,32 @@ function renderStatsPanel(){
   const maxEto = Math.max(1, ...series.map(s => s.etorions));
 
   const html = `
-    <div class="soft-card">
-      <div class="card__title">Vue d’ensemble</div>
-      <div class="card__sub">Progression restante : ${progress.pct}% · Dopamine score : ${dopamine}%</div>
-      <div class="card__sub">Tâches complétées : ${state.stats.tasksCompleted}</div>
-      <div class="card__sub">Étorions dégommés : ${state.stats.etorionsDone}</div>
-      <div class="card__sub">Sessions : ${state.stats.sessions}</div>
-      <div class="card__sub">Célébrations affichées : ${state.stats.celebrationsShown}</div>
-    </div>
-
-    <div class="soft-card">
-      <div class="card__title">Tâches / jour</div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
-        ${renderMiniBars(series, "tasks", maxTasks)}
+    <div class="card">
+      <div class="card__left">
+        <div class="card__title">Vue d’ensemble</div>
+        <div class="card__sub">Progression restante : ${progress.pct}% · Dopamine score : ${dopamine}%</div>
+        <div class="card__sub">Tâches complétées : ${state.stats.tasksCompleted}</div>
+        <div class="card__sub">Étorions dégommés : ${state.stats.etorionsDone}</div>
+        <div class="card__sub">Sessions : ${state.stats.sessions}</div>
+        <div class="card__sub">Célébrations affichées : ${state.stats.celebrationsShown}</div>
       </div>
     </div>
 
-    <div class="soft-card">
-      <div class="card__title">Étorions / jour</div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
-        ${renderMiniBars(series, "etorions", maxEto)}
+    <div class="card">
+      <div class="card__left">
+        <div class="card__title">Tâches / jour</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+          ${renderMiniBars(series, "tasks", maxTasks)}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__left">
+        <div class="card__title">Étorions / jour</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+          ${renderMiniBars(series, "etorions", maxEto)}
+        </div>
       </div>
     </div>
   `;
@@ -2097,7 +2149,6 @@ function playPomo(){
       saveState();
 
       status(`⏰ ${state.pomodoro.phase === "work" ? "Pomodoro" : "Pause"} prêt.`);
-
       resetPhase();
 
       if(state.pomodoro.autoStart === "auto"){
@@ -2162,7 +2213,7 @@ function applyPrefsFromPanel(){
 function resetPrefs(){
   state.ui.mode = "clair";
   state.ui.season = "automne";
-  state.ui.font = "inter";
+  state.ui.font = "yusei";
   state.ui.baseSize = 16;
   state.ui.serious = false;
   state.settings.keepListInFocus = true;
@@ -2170,9 +2221,12 @@ function resetPrefs(){
   state.settings.motivation = 2;
   state.pomodoro.workMin = 25;
   state.pomodoro.breakMin = 5;
+  state.ui.leftPanelWidth = 380;
+  state.ui.rightPanelWidth = 430;
 
   saveState();
   syncPrefsUI();
+  syncPanelWidthInputs();
   applyTheme();
   resetPhase();
   renderAll();
@@ -2199,7 +2253,6 @@ function resetDay(){
 
   saveState();
   renderAll();
-
   status("Reset total. Terrain nettoyé.");
 }
 
@@ -2209,6 +2262,7 @@ function resetDay(){
 
 function renderAll(){
   applyTheme();
+  syncPanelWidthInputs();
   renderSubtitle();
   renderProgress();
   renderHub();
@@ -2248,6 +2302,18 @@ function bindUI(){
   $("leftClose")?.addEventListener("click", closePanels);
   $("rightClose")?.addEventListener("click", closePanels);
   $("panelBack")?.addEventListener("click", closePanels);
+
+  $("leftPanelWidth")?.addEventListener("input", (e) => {
+    state.ui.leftPanelWidth = clamp(parseInt(e.target.value, 10) || 380, 300, 620);
+    setRootCssVars();
+    saveState();
+  });
+
+  $("rightPanelWidth")?.addEventListener("input", (e) => {
+    state.ui.rightPanelWidth = clamp(parseInt(e.target.value, 10) || 430, 320, 720);
+    setRootCssVars();
+    saveState();
+  });
 
   $("modeToggle")?.addEventListener("click", () => {
     state.ui.mode = state.ui.mode === "sombre" ? "clair" : "sombre";
@@ -2339,8 +2405,7 @@ function bindUI(){
 
   $("modalBack")?.addEventListener("click", () => {
     closeOverlay();
-    $("pomoModal")?.setAttribute("hidden", "");
-    $("modalBack")?.setAttribute("hidden", "");
+    closePomoModal();
   });
 
   $("inboxAdd")?.addEventListener("click", () => {
@@ -2436,20 +2501,8 @@ function bindUI(){
   });
 
   $("pomoTime")?.addEventListener("click", togglePomo);
-
-  $("pomoEdit")?.addEventListener("click", () => {
-    $("pomoModal")?.removeAttribute("hidden");
-    $("modalBack")?.removeAttribute("hidden");
-
-    if($("pomoMinutes")) $("pomoMinutes").value = state.pomodoro.workMin;
-    if($("breakMinutes")) $("breakMinutes").value = state.pomodoro.breakMin;
-    if($("autoStartSel")) $("autoStartSel").value = state.pomodoro.autoStart;
-  });
-
-  $("modalClose")?.addEventListener("click", () => {
-    $("pomoModal")?.setAttribute("hidden", "");
-    $("modalBack")?.setAttribute("hidden", "");
-  });
+  $("pomoEdit")?.addEventListener("click", openPomoModal);
+  $("modalClose")?.addEventListener("click", closePomoModal);
 
   $("pomoApply")?.addEventListener("click", () => {
     state.pomodoro.workMin = clamp(parseInt($("pomoMinutes").value, 10) || 25, 5, 90);
@@ -2458,9 +2511,7 @@ function bindUI(){
 
     saveState();
     resetPhase();
-
-    $("pomoModal")?.setAttribute("hidden", "");
-    $("modalBack")?.setAttribute("hidden", "");
+    closePomoModal();
   });
 
   $("pomoReset")?.addEventListener("click", () => {
@@ -2474,6 +2525,7 @@ function bindUI(){
 ========================= */
 
 let taskTimerLoop = null;
+
 function startTaskTimerLoop(){
   if(taskTimerLoop) clearInterval(taskTimerLoop);
   taskTimerLoop = setInterval(() => {
@@ -2487,6 +2539,7 @@ function init(){
   bindUI();
   syncPrefsUI();
   syncFlowPanel();
+  syncPanelWidthInputs();
   renderNotesOverlay();
   renderTyphonse();
   renderKiffance();
