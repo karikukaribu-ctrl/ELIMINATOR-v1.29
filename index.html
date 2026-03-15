@@ -41,7 +41,7 @@
 
   <!-- PANNEAU GAUCHE -->
   <aside id="leftPanel" class="panel panel--left" hidden aria-label="Panneau gauche">
-    <div class="panel__resize panel__resize--right" data-resize="left" aria-hidden="true"></div>
+    <div class="panel-resizer panel-resizer--right" id="leftPanelResizer" aria-hidden="true"></div>
 
     <div class="panel__head">
       <div class="panel__title">Menu</div>
@@ -313,7 +313,7 @@ Ranger bureau 1"
 
   <!-- PANNEAU DROIT -->
   <aside id="rightPanel" class="panel panel--right" hidden aria-label="Panneau droit">
-    <div class="panel__resize panel__resize--left" data-resize="right" aria-hidden="true"></div>
+    <div class="panel-resizer panel-resizer--left" id="rightPanelResizer" aria-hidden="true"></div>
 
     <div class="panel__head">
       <div class="panel__title">Panneau</div>
@@ -420,7 +420,7 @@ Ranger bureau 1"
 
   <!-- MODAL POMODORO -->
   <div id="pomoModal" class="glass-wrap" hidden role="dialog" aria-modal="true" aria-label="Pomodoro">
-    <div class="glass-modal glass-modal--small">
+    <div class="glass-modal glass-modal--small modal-frame">
       <div class="glass-modal__head">
         <div class="panel-title">Pomodoro</div>
         <button id="modalClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
@@ -457,7 +457,7 @@ Ranger bureau 1"
 
   <!-- OVERLAY CENTRAL -->
   <div id="overlayModal" class="glass-wrap" hidden role="dialog" aria-modal="true" aria-label="Fenêtre centrale">
-    <div class="glass-modal glass-modal--large">
+    <div class="glass-modal glass-modal--large modal-frame">
       <div class="glass-modal__head">
         <div id="overlayTitle" class="panel-title">Fenêtre</div>
         <button id="overlayClose" class="icon-btn" type="button" aria-label="Fermer">×</button>
