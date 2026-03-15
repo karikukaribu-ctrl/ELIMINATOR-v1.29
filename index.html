@@ -41,19 +41,11 @@
 
   <!-- PANNEAU GAUCHE -->
   <aside id="leftPanel" class="panel panel--left" hidden aria-label="Panneau gauche">
+    <div id="leftResizeHandle" class="resize-handle resize-handle--right" aria-hidden="true"></div>
+
     <div class="panel__head">
       <div class="panel__title">Menu</div>
       <div class="panel__head-tools">
-        <input
-          id="leftPanelWidth"
-          class="panel-range"
-          type="range"
-          min="300"
-          max="620"
-          step="10"
-          value="380"
-          title="Largeur panneau gauche"
-        >
         <button id="leftClose" class="icon-btn" type="button" aria-label="Fermer panneau gauche">×</button>
       </div>
     </div>
@@ -321,19 +313,11 @@ Ranger bureau 1"
 
   <!-- PANNEAU DROIT -->
   <aside id="rightPanel" class="panel panel--right" hidden aria-label="Panneau droit">
+    <div id="rightResizeHandle" class="resize-handle resize-handle--left" aria-hidden="true"></div>
+
     <div class="panel__head">
       <div class="panel__title">Panneau</div>
       <div class="panel__head-tools">
-        <input
-          id="rightPanelWidth"
-          class="panel-range"
-          type="range"
-          min="320"
-          max="720"
-          step="10"
-          value="430"
-          title="Largeur panneau droit"
-        >
         <button id="rightClose" class="icon-btn" type="button" aria-label="Fermer panneau droit">×</button>
       </div>
     </div>
