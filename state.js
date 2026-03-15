@@ -4,7 +4,7 @@ const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 const uid = () => Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
 const nowISO = () => new Date().toISOString();
 
-const STORAGE_KEY = "eliminator_v2_perfected";
+const STORAGE_KEY = "eliminator_v3_stable";
 const SEASONS = ["printemps", "ete", "automne", "hiver", "noirblanc"];
 
 const SUBLINES = [
@@ -27,96 +27,36 @@ const TIPS = [
 
 const CELEBRATIONS = {
   fantasy: [
-    {
-      title: "BANNIÈRE PLANTÉE",
-      msg: "Le territoire du bazar vient de perdre un village stratégique. Une chèvre prophétique confirme la victoire."
-    },
-    {
-      title: "CHANT DE VICTOIRE",
-      msg: "Une tâche est tombée. Au loin, les montagnes administratives ont gémi comme un classeur humide."
-    },
-    {
-      title: "DRAGON COMPTABLE TERRASSÉ",
-      msg: "La bête gardait ce dossier depuis mille ans. Tu l’as vaincue avec calme, et probablement sans cape."
-    },
-    {
-      title: "LE BÂTON A FRAPPÉ LE PAVÉ",
-      msg: "Quelque part, Gandalf le Blanc approuve d’un hochement de sourcil et décrète que, oui, tu passeras."
-    }
+    { title: "BANNIÈRE PLANTÉE", msg: "Le territoire du bazar vient de perdre un village stratégique. Une chèvre prophétique confirme la victoire." },
+    { title: "CHANT DE VICTOIRE", msg: "Une tâche est tombée. Au loin, les montagnes administratives ont gémi comme un classeur humide." },
+    { title: "DRAGON COMPTABLE TERRASSÉ", msg: "La bête gardait ce dossier depuis mille ans. Tu l’as vaincue avec calme, et probablement sans cape." },
+    { title: "LE BÂTON A FRAPPÉ LE PAVÉ", msg: "Quelque part, Gandalf le Blanc approuve d’un hochement de sourcil et décrète que, oui, tu passeras." }
   ],
   dream: [
-    {
-      title: "ARCHITECTE DU RÉEL",
-      msg: "Tu viens de plier un morceau de journée dans le bon sens. La réalité, surprise, coopère."
-    },
-    {
-      title: "TOTEM : STABLE",
-      msg: "Le monde intérieur vacillait un peu. Puis tu as fait une vraie chose. C’est déjà une architecture."
-    },
-    {
-      title: "ORIGAMI DU TEMPS RÉUSSI",
-      msg: "Tu as pris une minute informe et tu en as fait une forme utile. Le réel trouve cela vaguement insultant."
-    }
+    { title: "ARCHITECTE DU RÉEL", msg: "Tu viens de plier un morceau de journée dans le bon sens. La réalité, surprise, coopère." },
+    { title: "TOTEM : STABLE", msg: "Le monde intérieur vacillait un peu. Puis tu as fait une vraie chose. C’est déjà une architecture." },
+    { title: "ORIGAMI DU TEMPS RÉUSSI", msg: "Tu as pris une minute informe et tu en as fait une forme utile. Le réel trouve cela vaguement insultant." }
   ],
   ninja: [
-    {
-      title: "TECHNIQUE INTERDITE",
-      msg: "Coup propre. La tâche n’a même pas eu le temps de préparer un discours défensif."
-    },
-    {
-      title: "MODE INFILTRATION",
-      msg: "Tu es passé entre les lasers de la distraction. Personne n’a rien vu. Sauf le résultat."
-    },
-    {
-      title: "ASSASSINAT ADMINISTRATIF ÉLÉGANT",
-      msg: "Une formalité de moins. La paperasse a glissé dans le néant avec une politesse remarquable."
-    }
+    { title: "TECHNIQUE INTERDITE", msg: "Coup propre. La tâche n’a même pas eu le temps de préparer un discours défensif." },
+    { title: "MODE INFILTRATION", msg: "Tu es passé entre les lasers de la distraction. Personne n’a rien vu. Sauf le résultat." },
+    { title: "ASSASSINAT ADMINISTRATIF ÉLÉGANT", msg: "Une formalité de moins. La paperasse a glissé dans le néant avec une politesse remarquable." }
   ],
   med: [
-    {
-      title: "GESTE CHIRURGICAL",
-      msg: "Incision nette dans le chaos. Champ propre. Fermeture sans complication. L’équipe est satisfaite."
-    },
-    {
-      title: "DIAGNOSTIC : RÉSOLU",
-      msg: "Symptôme : tâche persistante. Traitement : action ciblée. Évolution : favorable, presque insolente."
-    },
-    {
-      title: "HÉMOSTASE PARFAITE",
-      msg: "Une fuite d’énergie vient d’être stoppée. Le pronostic fonctionnel s’améliore à vue d’œil."
-    }
+    { title: "GESTE CHIRURGICAL", msg: "Incision nette dans le chaos. Champ propre. Fermeture sans complication. L’équipe est satisfaite." },
+    { title: "DIAGNOSTIC : RÉSOLU", msg: "Symptôme : tâche persistante. Traitement : action ciblée. Évolution : favorable, presque insolente." },
+    { title: "HÉMOSTASE PARFAITE", msg: "Une fuite d’énergie vient d’être stoppée. Le pronostic fonctionnel s’améliore à vue d’œil." }
   ],
   game: [
-    {
-      title: "QUÊTE VALIDÉE",
-      msg: "Objectif atteint. Butin obtenu : paix mentale légère, dignité +2, confusion -1."
-    },
-    {
-      title: "ACHIEVEMENT DÉBLOQUÉ",
-      msg: "« Je termine ce que je commence ». Succès rare. Les anciens pensaient cela impossible."
-    },
-    {
-      title: "INVENTAIRE ALLÉGÉ",
-      msg: "Une charge de moins dans le sac de quêtes. Tu marches déjà mieux, petit héros fonctionnel."
-    }
+    { title: "QUÊTE VALIDÉE", msg: "Objectif atteint. Butin obtenu : paix mentale légère, dignité +2, confusion -1." },
+    { title: "ACHIEVEMENT DÉBLOQUÉ", msg: "« Je termine ce que je commence ». Succès rare. Les anciens pensaient cela impossible." },
+    { title: "INVENTAIRE ALLÉGÉ", msg: "Une charge de moins dans le sac de quêtes. Tu marches déjà mieux, petit héros fonctionnel." }
   ],
   empire: [
-    {
-      title: "EMPIRE ÉTENDU",
-      msg: "Un étorion de moins. Ton autorité sur la journée augmente d’un cran parfaitement délicieux."
-    },
-    {
-      title: "HÉROÏSME ADMINISTRATIF",
-      msg: "La bureaucratie a levé un sourcil. Tu l’as écrasé avec une action concrète. Très beau geste."
-    },
-    {
-      title: "RÉVOLTE ÉTOUFFÉE",
-      msg: "Une poche de désorganisation a tenté de résister. Elle a été traitée avec le tact brutal nécessaire."
-    },
-    {
-      title: "SAMWISE APPROUVE",
-      msg: "Ce n’est peut-être pas glorieux, mais c’est du vrai courage de jardinier : avancer encore d’un pas avec la casserole sur le dos."
-    }
+    { title: "EMPIRE ÉTENDU", msg: "Un étorion de moins. Ton autorité sur la journée augmente d’un cran parfaitement délicieux." },
+    { title: "HÉROÏSME ADMINISTRATIF", msg: "La bureaucratie a levé un sourcil. Tu l’as écrasé avec une action concrète. Très beau geste." },
+    { title: "RÉVOLTE ÉTOUFFÉE", msg: "Une poche de désorganisation a tenté de résister. Elle a été traitée avec le tact brutal nécessaire." },
+    { title: "SAMWISE APPROUVE", msg: "Ce n’est peut-être pas glorieux, mais c’est du vrai courage de jardinier : avancer encore d’un pas avec la casserole sur le dos." }
   ]
 };
 
@@ -132,7 +72,6 @@ const defaultState = {
     leftPanelWidth: 380,
     rightPanelWidth: 430
   },
-
   settings: {
     fatigue: 2,
     motivation: 2,
@@ -144,17 +83,14 @@ const defaultState = {
     includedCats: [],
     statsRangeDays: 30
   },
-
   baseline: {
     totalTasks: 0,
     totalEtorions: 0
   },
-
   tasks: [],
   currentTaskId: null,
   currentTaskStart: null,
   undo: [],
-
   kiffances: [
     "Bois un verre d’eau.",
     "Marche 60 secondes. Puis reviens.",
@@ -165,52 +101,34 @@ const defaultState = {
     "Micro-reset : eau, respiration, retour.",
     "Fenêtre ouverte 30 secondes. Puis reprise nette."
   ],
-
   pomodoro: {
     workMin: 25,
     breakMin: 5,
     autoStart: "auto",
     phase: "work"
   },
-
   notes: {
     entries: [],
     text: "",
     reminders: "",
     typhonse: []
   },
-
   habits: [],
-
   sets: {
     hospital: {
       enabled: true,
-      patients: [
-        { id: uid(), name: "Patient 1" },
-        { id: uid(), name: "Patient 2" },
-        { id: uid(), name: "Patient 3" },
-        { id: uid(), name: "Patient 4" }
-      ],
+      patients: Array.from({ length: 4 }, (_, i) => ({ id: uid(), name: `Patient ${i + 1}` })),
       itemsPerPatient: ["Voir patient", "Note", "Traitement", "Dossier"],
       checks: {}
     },
     consult: {
       enabled: true,
-      patients: [
-        { id: uid(), name: "Patient 1" },
-        { id: uid(), name: "Patient 2" },
-        { id: uid(), name: "Patient 3" },
-        { id: uid(), name: "Patient 4" },
-        { id: uid(), name: "Patient 5" },
-        { id: uid(), name: "Patient 6" }
-      ],
+      patients: Array.from({ length: 6 }, (_, i) => ({ id: uid(), name: `Patient ${i + 1}` })),
       itemsPerPatient: ["Voir patient", "Note", "Ordonnance", "Dossier"],
       checks: {}
     }
   },
-
   history: [],
-
   stats: {
     tasksCompleted: 0,
     etorionsDone: 0,
@@ -401,13 +319,8 @@ function status(message, ms = 4200){
 
 function setRootCssVars(){
   document.documentElement.style.setProperty("--baseSize", `${clamp(state.ui.baseSize, 14, 18)}px`);
-  document.documentElement.style.setProperty("--panelLeft", `${clamp(state.ui.leftPanelWidth || 380, 300, 620)}px`);
-  document.documentElement.style.setProperty("--panelRight", `${clamp(state.ui.rightPanelWidth || 430, 320, 720)}px`);
-}
-
-function syncPanelWidthInputs(){
-  if($("leftPanelWidth")) $("leftPanelWidth").value = String(clamp(state.ui.leftPanelWidth || 380, 300, 620));
-  if($("rightPanelWidth")) $("rightPanelWidth").value = String(clamp(state.ui.rightPanelWidth || 430, 320, 720));
+  document.documentElement.style.setProperty("--panelLeft", `${clamp(state.ui.leftPanelWidth || 380, 300, 720)}px`);
+  document.documentElement.style.setProperty("--panelRight", `${clamp(state.ui.rightPanelWidth || 430, 320, 840)}px`);
 }
 
 /* =========================
@@ -438,9 +351,7 @@ function applyTheme(){
     $("modeToggle").setAttribute("aria-pressed", state.ui.mode === "sombre" ? "true" : "false");
   }
 
-  if($("seasonCycle")){
-    $("seasonCycle").textContent = seasonLabel(state.ui.season);
-  }
+  if($("seasonCycle")) $("seasonCycle").textContent = seasonLabel(state.ui.season);
 
   if($("seriousToggle")){
     $("seriousToggle").textContent = state.ui.serious ? "Sérieux ON" : "Sérieux";
@@ -455,12 +366,10 @@ function applyTheme(){
   if($("listToggleBtn")){
     $("listToggleBtn").setAttribute("aria-pressed", state.ui.showBelowList ? "true" : "false");
   }
-
-  document.title = state.ui.focus ? "ELIMINATOR — Focus" : "ELIMINATOR";
 }
 
 /* =========================
-   PANELS + TABS
+   PANELS
 ========================= */
 
 function showPanelBack(show){
@@ -493,6 +402,54 @@ function closePanels(){
   showPanelBack(false);
   document.body.style.overflow = "";
 }
+
+/* =========================
+   RESIZE PANELS
+========================= */
+
+function bindPanelResize(handleId, side){
+  const handle = $(handleId);
+  if(!handle) return;
+
+  let dragging = false;
+
+  const onMove = (e) => {
+    if(!dragging) return;
+
+    if(side === "left"){
+      const width = clamp(e.clientX, 300, Math.min(window.innerWidth - 40, 720));
+      state.ui.leftPanelWidth = width;
+    }else{
+      const width = clamp(window.innerWidth - e.clientX, 320, Math.min(window.innerWidth - 40, 840));
+      state.ui.rightPanelWidth = width;
+    }
+
+    setRootCssVars();
+  };
+
+  const onUp = () => {
+    if(!dragging) return;
+    dragging = false;
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+    saveState();
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  };
+
+  handle.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    dragging = true;
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "ew-resize";
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  });
+}
+
+/* =========================
+   TABS
+========================= */
 
 function bindTabs(){
   $$(".tab-btn[data-lefttab]").forEach(btn => {
@@ -531,7 +488,7 @@ function bindTabs(){
 }
 
 /* =========================
-   OVERLAYS / MODALS
+   MODALS / OVERLAYS
 ========================= */
 
 function showModalBack(show){
@@ -595,7 +552,7 @@ function closePomoModal(){
 }
 
 /* =========================
-   IMPORT + ESTIMATION
+   TASK IMPORT + ESTIMATION
 ========================= */
 
 function isAllCapsLine(line){
@@ -624,8 +581,8 @@ function parseTaskLine(line){
 
   title = title.replace(/\s+/g, " ").trim();
   if(!title) return null;
-
   if(etorions !== null) etorions = clamp(etorions, 1, 99);
+
   return { title, etorions };
 }
 
@@ -724,7 +681,6 @@ function getTask(id){
 
 function sortTasks(list){
   const mode = state.settings.listSort || "roulette";
-
   const todayScore = (task) => task.today ? -1 : 0;
   const pinScore = (task) => task.pinned ? -1 : 0;
 
@@ -796,13 +752,7 @@ function computeProgress(){
 
   const pct = baseTasks <= 0 ? 100 : clamp(Math.round((remT / baseTasks) * 100), 0, 100);
 
-  return {
-    baseTasks,
-    baseEtorions,
-    remT,
-    remE,
-    pct
-  };
+  return { baseTasks, baseEtorions, remT, remE, pct };
 }
 
 function dopamineScore(){
@@ -811,7 +761,6 @@ function dopamineScore(){
 
   const totalLoad = tasks.reduce((sum, task) => sum + (task.etorionsLeft || task.etorionsTotal || 1), 0);
   const avgLoad = totalLoad / tasks.length;
-
   return Math.round(Math.max(0, 100 - avgLoad * 10));
 }
 
@@ -825,7 +774,6 @@ function roulettePick(){
 
   pool.sort((a, b) => (a.etorionsLeft || a.etorionsTotal) - (b.etorionsLeft || b.etorionsTotal));
   const sample = pool.slice(0, Math.min(4, pool.length));
-
   return sample[Math.floor(Math.random() * sample.length)];
 }
 
@@ -899,7 +847,6 @@ function completeTask(id = state.currentTaskId){
   if(!task || task.done) return;
 
   pushUndo("complete");
-
   task.done = true;
   task.doneAt = nowISO();
 
@@ -915,7 +862,6 @@ function completeTask(id = state.currentTaskId){
   ensureCurrentTask();
   saveState();
   renderAll();
-
   status("Tâche terminée. Une menace de moins.");
 }
 
@@ -940,7 +886,6 @@ function degommeEtorion(){
   }
 
   pushUndo("degomme");
-
   task.etorionsLeft = clamp((task.etorionsLeft || 1) - 1, 0, 99);
   state.stats.etorionsDone += 1;
 
@@ -985,7 +930,7 @@ function doUndo(){
 }
 
 /* =========================
-   CELEBRATIONS + FX
+   CELEBRATIONS
 ========================= */
 
 function weightedCelebrationPool(){
@@ -1062,6 +1007,7 @@ function runFireworks(canvas){
   const dpr = window.devicePixelRatio || 1;
   const w = window.innerWidth;
   const h = window.innerHeight;
+
   canvas.width = w * dpr;
   canvas.height = h * dpr;
   canvas.style.width = `${w}px`;
@@ -1188,7 +1134,7 @@ function maybeShowCelebration(force = false){
 }
 
 /* =========================
-   HUB RENDER
+   HUB
 ========================= */
 
 function renderSubtitle(){
@@ -1456,7 +1402,6 @@ function renderNotesEntries(){
   if(!root) return;
 
   const entries = state.notes.entries || [];
-
   if(entries.length === 0){
     root.innerHTML = `<div class="muted small">Aucune note horodatée.</div>`;
     return;
@@ -1645,11 +1590,7 @@ function toggleHabitCheck(habitId, index){
 function habitProgress(habit){
   const done = habit.checks.filter(Boolean).length;
   const total = habit.checks.length;
-  return {
-    done,
-    total,
-    pct: total ? Math.round(done / total * 100) : 0
-  };
+  return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
 }
 
 function renderHabitsPanel(){
@@ -1696,11 +1637,8 @@ function renderHabitsPanel(){
       const habit = state.habits.find(h => h.id === habitId);
       if(!habit) return;
 
-      if(act === "reset"){
-        habit.checks = habit.checks.map(() => false);
-      }else if(act === "del"){
-        state.habits = state.habits.filter(h => h.id !== habitId);
-      }
+      if(act === "reset") habit.checks = habit.checks.map(() => false);
+      else if(act === "del") state.habits = state.habits.filter(h => h.id !== habitId);
 
       saveState();
       renderHabitsPanel();
@@ -1778,7 +1716,6 @@ function renameSetPatient(setName, patientId, nextName){
 
 function summarizeSetsToday(){
   initSetsChecksForToday();
-
   const dk = dayKey();
   const out = {};
 
@@ -1803,7 +1740,6 @@ function renderSetsPanel(){
   const buildSet = (setKey, title) => {
     const set = state.sets[setKey];
     const checks = set.checks?.[dk] || {};
-
     let html = `
       <div class="card">
         <div class="card__left">
@@ -1873,11 +1809,7 @@ function snapshotDay(){
   const active = activeTasks();
   const habitsSummary = state.habits.map(h => {
     const p = habitProgress(h);
-    return {
-      name: h.name,
-      done: p.done,
-      total: p.total
-    };
+    return { name: h.name, done: p.done, total: p.total };
   });
 
   const entry = {
@@ -1908,33 +1840,27 @@ function exportTodayText(){
   const lines = [];
   lines.push(`ELIMINATOR — RAPPORT JOURNALIER — ${dk}`);
   lines.push("");
-
   lines.push(`TÂCHES FAITES (${entry.doneTasks})`);
   if(entry.doneTitles.length === 0) lines.push("—");
   else entry.doneTitles.forEach(title => lines.push(`- ${title}`));
   lines.push("");
-
   lines.push(`TÂCHES RESTANTES (${entry.remainingTasks})`);
   if(entry.remainingTitles.length === 0) lines.push("—");
   else entry.remainingTitles.forEach(title => lines.push(`- ${title}`));
   lines.push("");
-
   lines.push(`HABITUDES`);
   if(!entry.habits.length) lines.push("—");
   else entry.habits.forEach(h => lines.push(`- ${h.name}: ${h.done}/${h.total}`));
   lines.push("");
-
   lines.push(`SETS`);
   const hs = entry.sets?.hospital || { done: 0, total: 0 };
   const cs = entry.sets?.consult || { done: 0, total: 0 };
   lines.push(`- HOSPITALIER: ${hs.done}/${hs.total}`);
   lines.push(`- CONSULTATION: ${cs.done}/${cs.total}`);
   lines.push("");
-
   lines.push(`STATS`);
   lines.push(`- ÉTORIONS DÉGOMMÉS: ${entry.doneEtorions}`);
   lines.push(`- BASE ÉTORIONS: ${entry.baselineEtorions}`);
-
   return lines.join("\n");
 }
 
@@ -2001,9 +1927,7 @@ function renderHistoryPanel(){
     }
 
     const map = {};
-    state.history.forEach(entry => {
-      map[entry.day] = entry.doneTasks || 0;
-    });
+    state.history.forEach(entry => { map[entry.day] = entry.doneTasks || 0; });
 
     const max = Math.max(1, ...Object.values(map), 1);
 
@@ -2139,9 +2063,7 @@ function playPomo(){
       status(`⏰ ${state.pomodoro.phase === "work" ? "Pomodoro" : "Pause"} prêt.`);
       resetPhase();
 
-      if(state.pomodoro.autoStart === "auto"){
-        playPomo();
-      }
+      if(state.pomodoro.autoStart === "auto") playPomo();
       return;
     }
 
@@ -2214,7 +2136,6 @@ function resetPrefs(){
 
   saveState();
   syncPrefsUI();
-  syncPanelWidthInputs();
   applyTheme();
   resetPhase();
   renderAll();
@@ -2228,10 +2149,7 @@ function resetDay(){
   pushUndo("reset");
 
   state.tasks = [];
-  state.baseline = {
-    totalTasks: 0,
-    totalEtorions: 0
-  };
+  state.baseline = { totalTasks: 0, totalEtorions: 0 };
   state.currentTaskId = null;
   state.currentTaskStart = null;
   state.stats.sessions += 1;
@@ -2250,7 +2168,6 @@ function resetDay(){
 
 function renderAll(){
   applyTheme();
-  syncPanelWidthInputs();
   renderSubtitle();
   renderProgress();
   renderHub();
@@ -2269,7 +2186,7 @@ function renderAll(){
 }
 
 /* =========================
-   TIMERS
+   TIMER LOOP
 ========================= */
 
 function startTaskTimerLoop(){
@@ -2283,24 +2200,22 @@ function startTaskTimerLoop(){
    EVENTS
 ========================= */
 
+function bindOverlayOutsideClose(){
+  $("overlayModal")?.addEventListener("mousedown", (e) => {
+    if(e.target === $("overlayModal")) closeOverlay();
+  });
+
+  $("pomoModal")?.addEventListener("mousedown", (e) => {
+    if(e.target === $("pomoModal")) closePomoModal();
+  });
+}
+
 function bindUI(){
   $("btnLeft")?.addEventListener("click", () => openPanel("left"));
   $("btnRight")?.addEventListener("click", () => openPanel("right"));
   $("leftClose")?.addEventListener("click", closePanels);
   $("rightClose")?.addEventListener("click", closePanels);
   $("panelBack")?.addEventListener("click", closePanels);
-
-  $("leftPanelWidth")?.addEventListener("input", (e) => {
-    state.ui.leftPanelWidth = clamp(parseInt(e.target.value, 10) || 380, 300, 620);
-    setRootCssVars();
-    saveState();
-  });
-
-  $("rightPanelWidth")?.addEventListener("input", (e) => {
-    state.ui.rightPanelWidth = clamp(parseInt(e.target.value, 10) || 430, 320, 720);
-    setRootCssVars();
-    saveState();
-  });
 
   $("modeToggle")?.addEventListener("click", () => {
     state.ui.mode = state.ui.mode === "sombre" ? "clair" : "sombre";
@@ -2389,6 +2304,7 @@ function bindUI(){
   });
 
   $("overlayClose")?.addEventListener("click", closeOverlay);
+  $("modalClose")?.addEventListener("click", closePomoModal);
 
   $("modalBack")?.addEventListener("click", () => {
     closeOverlay();
@@ -2489,7 +2405,6 @@ function bindUI(){
 
   $("pomoTime")?.addEventListener("click", togglePomo);
   $("pomoEdit")?.addEventListener("click", openPomoModal);
-  $("modalClose")?.addEventListener("click", closePomoModal);
 
   $("pomoApply")?.addEventListener("click", () => {
     state.pomodoro.workMin = clamp(parseInt($("pomoMinutes").value, 10) || 25, 5, 90);
@@ -2515,9 +2430,11 @@ function init(){
   applyTheme();
   bindTabs();
   bindUI();
+  bindOverlayOutsideClose();
+  bindPanelResize("leftPanelResizer", "left");
+  bindPanelResize("rightPanelResizer", "right");
   syncPrefsUI();
   syncFlowPanel();
-  syncPanelWidthInputs();
   renderNotesOverlay();
   renderTyphonse();
   renderKiffance();
